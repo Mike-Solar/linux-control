@@ -1,5 +1,6 @@
 #include "PowerOptionsPage.h"
 #include "Win7Ui.h"
+#include "UiText.h"
 
 #include <QScrollArea>
 #include <QLabel>
@@ -135,17 +136,14 @@ PowerOptionsPage::PowerOptionsPage(QScrollArea *sidebar, QWidget *parent)
                                         /*fixedWidth=*/700);
 
     // Page title.
-    contentV->addWidget(Win7::pageTitle("Select a power plan"));
+    contentV->addWidget(Win7::pageTitle("选择电源计划"));
     contentV->addSpacing(10);
 
     // Intro paragraph with the trailing "Tell me more…" link. A real <a> gives
     // the underlined, palette-coloured link Windows shows; it's informational
     // only, so it points nowhere.
     auto *intro = new QLabel(
-        "Power plans can help you maximize your computer's performance or "
-        "conserve energy. Make a plan active by selecting it, or choose a plan "
-        "and customize it by changing its power settings. "
-        "<a href=\"#\">Tell me more about power plans</a>");
+        "电源计划可以帮助你最大化计算机性能或节省能源。选择某个计划即可将其激活，也可以选择计划并通过更改其电源设置来自定义该计划。<a href=\"#\">告诉我有关电源计划的详细信息</a>");
     {
         QFont f = intro->font();
         f.setPointSize(9);
@@ -171,7 +169,7 @@ PowerOptionsPage::PowerOptionsPage(QScrollArea *sidebar, QWidget *parent)
         });
 
     // Preferred plans
-    contentV->addLayout(Win7::sectionHeading("Preferred plans"));
+    contentV->addLayout(Win7::sectionHeading("首选计划"));
     contentV->addSpacing(6);
 
     m_planList = new QVBoxLayout;
@@ -211,8 +209,8 @@ PowerOptionsPage::PowerOptionsPage(QScrollArea *sidebar, QWidget *parent)
 
     auto applyExpanded = [additionalHeadingLabel, chevron, this](bool expanded) {
         m_additionalWrap->setVisible(expanded);
-        additionalHeadingLabel->setText(expanded ? "Hide additional plans"
-                                                  : "Show additional plans");
+        additionalHeadingLabel->setText(expanded ? "隐藏附加计划"
+                                                  : "显示附加计划");
         QSignalBlocker block(chevron);
         chevron->setChecked(expanded);
     };
@@ -347,7 +345,7 @@ QWidget *PowerOptionsPage::buildPlanRow(const Plan &plan)
     nameLine->setContentsMargins(0, 0, 0, 0);
     nameLine->setSpacing(6);
 
-    auto *name = new QLabel(plan.name);
+    auto *name = new QLabel(UiText::localize(plan.name));
     {
         QFont f = name->font();
         f.setPointSize(9);
@@ -364,7 +362,7 @@ QWidget *PowerOptionsPage::buildPlanRow(const Plan &plan)
     nameLine->addWidget(name, 0, Qt::AlignVCenter);
     nameLine->addStretch(1);
 
-    auto *change = new QLabel("Change plan settings");
+    auto *change = new QLabel("更改计划设置");
     {
         QFont f = change->font();
         f.setPointSize(9);
@@ -378,7 +376,7 @@ QWidget *PowerOptionsPage::buildPlanRow(const Plan &plan)
 
     textV->addLayout(nameLine);
 
-    auto *desc = new QLabel(plan.description);
+    auto *desc = new QLabel(UiText::localize(plan.description));
     {
         QFont f = desc->font();
         f.setPointSize(9);

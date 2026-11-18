@@ -260,11 +260,11 @@ ActionCenterPage::ActionCenterPage(QScrollArea *sidebar, QWidget *parent)
 
     // Page heading
     contentV->addWidget(
-        Win7::pageTitle("Review recent messages and resolve problems", 13));
+        Win7::pageTitle("查看最近的消息并解决问题", 13));
     contentV->addSpacing(8);
 
     auto *blurb = bodyLabel(
-        "Action Center has detected one or more issues for you to review.");
+        "操作中心检测到一个或多个问题需要你查看。");
     contentV->addWidget(blurb);
     contentV->addSpacing(14);
 
@@ -276,40 +276,38 @@ ActionCenterPage::ActionCenterPage(QScrollArea *sidebar, QWidget *parent)
         v->setContentsMargins(0, 0, 0, 0);
         v->setSpacing(14);
         v->addWidget(buildStatusRow(
-            "Network firewall", info.firewallOn ? "On" : "Off",
+            "网络防火墙", info.firewallOn ? "开" : "关",
             info.firewallOn
                 ? Branding::brand("Linux Firewall (ufw) is actively "
                                   "protecting your computer.")
                 : Branding::brand("Linux Firewall (ufw) is turned off.")));
         v->addWidget(buildStatusRow(
-            Branding::brand("Linux Update"), "On",
+            Branding::brand("Linux Update"), "开",
             Branding::brand("Linux will automatically install updates as they "
                             "become available.")));
         v->addWidget(buildStatusRow(
-            "Spyware and unwanted software protection",
-            info.avPresent ? "On" : "Off",
+            "间谍软件和不需要的软件防护",
+            info.avPresent ? "开" : "关",
             info.avPresent
-                ? QStringLiteral("%1 reports that it is turned on.")
+                ? QStringLiteral("%1 报告它已开启。")
                       .arg(info.avName)
-                : QStringLiteral("No antivirus program is installed."),
-            "View installed antivirus programs"));
+                : QStringLiteral("未安装防病毒程序。"),
+            "查看已安装的防病毒程序"));
         v->addWidget(buildStatusRow(
-            "Internet security settings", "OK",
-            "All Internet security settings are set to their recommended "
-            "levels."));
+            "Internet 安全设置", "确定",
+            "所有 Internet 安全设置均已设为建议级别。"));
         v->addWidget(buildStatusRow(
-            "User Account Control", info.uacOn ? "On" : "Off",
+            "用户帐户控制", info.uacOn ? "开" : "关",
             info.uacOn
-                ? "polkit will prompt for authentication when programs try to "
-                  "make administrative changes."
-                : "polkit authentication is not available.",
-            "Change settings"));
+                ? "程序尝试进行管理更改时，polkit 将提示进行身份验证。"
+                : "polkit 身份验证不可用。",
+            "更改设置"));
         v->addWidget(buildStatusRow(
-            "Network Access Protection", "Off",
-            "Network Access Protection Agent service is not running.",
-            "What is Network Access Protection?"));
+            "网络访问保护", "关",
+            "网络访问保护代理服务未运行。",
+            "什么是网络访问保护？"));
     }
-    contentV->addWidget(buildSection("Security", /*expanded=*/false,
+    contentV->addWidget(buildSection("安全", /*expanded=*/false,
                                      securityRows));
 
     // ---- Maintenance section ---------------------------------------------
@@ -320,32 +318,32 @@ ActionCenterPage::ActionCenterPage(QScrollArea *sidebar, QWidget *parent)
         v->setContentsMargins(0, 0, 0, 0);
         v->setSpacing(14);
         v->addWidget(buildStatusRow(
-            "Check for solutions to problem reports", "Off",
-            "Problem reporting is turned off."));
+            "检查问题报告的解决方案", "关",
+            "问题报告已关闭。"));
         v->addWidget(buildStatusRow(
-            "Backup", "Not set up",
-            "Your files are not being backed up."));
+            "备份", "未设置",
+            "你的文件未备份。"));
         v->addWidget(buildStatusRow(
-            "Check for updates", "No action needed",
+            "检查更新", "无需操作",
             Branding::brand("Linux Update does not require any action.")));
         v->addWidget(buildStatusRow(
-            "Troubleshooting: System Maintenance", "No action needed",
-            "The system is actively checking for maintenance problems."));
+            "疑难解答：系统维护", "无需操作",
+            "系统正在主动检查维护问题。"));
     }
-    contentV->addWidget(buildSection("Maintenance", /*expanded=*/false,
+    contentV->addWidget(buildSection("维护", /*expanded=*/false,
                                      maintRows));
     contentV->addSpacing(14);
 
     // The Set up backup alert box shows regardless of section state, as the
     // Windows Action Center keeps outstanding "action needed" items visible.
     contentV->addWidget(buildAlertBox(
-        "Set up backup", "Your files are not being backed up.",
-        "Set up backup", "Turn off messages about Backup"));
+        "设置备份", "你的文件未备份。",
+        "设置备份", "关闭有关备份的消息"));
     contentV->addSpacing(24);
 
     // ---- Bottom "If you don't see your problem listed" --------------------
     auto *bottomIntro = bodyLabel(
-        "If you don't see your problem listed, try one of these:");
+        "如果未列出你的问题，请尝试以下操作：");
     contentV->addWidget(bottomIntro);
     contentV->addSpacing(12);
 
@@ -354,10 +352,10 @@ ActionCenterPage::ActionCenterPage(QScrollArea *sidebar, QWidget *parent)
     bottomRow->setSpacing(40);
     bottomRow->addWidget(buildBottomTask(
         {"tools-report-bug", "system-run", "preferences-system"},
-        "Troubleshooting", "Find and fix problems"), 0, Qt::AlignTop);
+        "疑难解答", "查找并解决问题"), 0, Qt::AlignTop);
     bottomRow->addWidget(buildBottomTask(
         {"document-revert", "chronometer", "system-reboot"},
-        "Recovery", "Restore your computer to an earlier time"), 0,
+        "恢复", "将计算机还原到较早的时间"), 0,
         Qt::AlignTop);
     bottomRow->addStretch(1);
     contentV->addLayout(bottomRow);

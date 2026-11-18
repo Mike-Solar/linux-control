@@ -71,7 +71,7 @@ FirewallPage::FwInfo FirewallPage::gatherInfo()
                  + countRules(QStringLiteral("/etc/ufw/user6.rules"));
 
     fw.netConnected = hasDefaultRoute();
-    fw.networkName  = QStringLiteral("Network");
+    fw.networkName  = QStringLiteral("网络");
 
     return fw;
 }
@@ -103,13 +103,11 @@ QList<SidebarLink> FirewallPage::sidebarSeeAlso()
 static QString incomingText(const QString &policy)
 {
     if (policy == QLatin1String("ACCEPT"))
-        return QStringLiteral("Allow all incoming connections");
+        return QStringLiteral("允许所有传入连接");
     if (policy == QLatin1String("REJECT"))
-        return QStringLiteral("Reject all connections to programs that are not "
-                              "on the list of allowed programs");
+        return QStringLiteral("拒绝不在允许程序列表中的程序的所有连接");
     // DROP (the ufw default): silently dropped, matching Windows' "Block all".
-    return QStringLiteral("Block all connections to programs that are not on "
-                          "the list of allowed programs");
+    return QStringLiteral("阻止不在允许程序列表中的程序的所有连接");
 }
 
 // Notification phrasing derived from ufw's LOGLEVEL ("off" disables logging).
@@ -193,8 +191,7 @@ QWidget *FirewallPage::buildLocationPanel(const QString &title,
     bodyV->setSpacing(0);
 
     auto *caption = Win7::bodyLabel(
-        "Linux Firewall (ufw) applies one set of rules to every network. Unlike "
-        "Windows, Linux has no separate Home, Work, or Public network profiles.");
+        "Linux 防火墙 (ufw) 对每个网络应用同一组规则。与 Windows 不同，Linux 没有单独的家庭、工作或公用网络配置文件。");
     caption->setContentsMargins(kLeftInset, 0, kRightInset, 0);
     bodyV->addWidget(caption);
     bodyV->addSpacing(12);
@@ -213,14 +210,14 @@ QWidget *FirewallPage::buildLocationPanel(const QString &title,
     int r = 0;
     grid->addWidget(Win7::bodyLabel(Branding::brand("Linux Firewall state:")),
                     r, 0);
-    grid->addWidget(Win7::bodyLabel(info.enabled ? "On" : "Off"), r, 1);
+    grid->addWidget(Win7::bodyLabel(info.enabled ? "开" : "关"), r, 1);
     ++r;
 
-    grid->addWidget(Win7::bodyLabel("Incoming connections:"), r, 0);
+    grid->addWidget(Win7::bodyLabel("传入连接："), r, 0);
     grid->addWidget(Win7::bodyLabel(incomingText(info.inputPolicy)), r, 1);
     ++r;
 
-    grid->addWidget(Win7::bodyLabel("Active networks:"), r, 0);
+    grid->addWidget(Win7::bodyLabel("活动网络："), r, 0);
     // Icon + network-name cell.
     {
         auto *cell = new QWidget;
@@ -236,14 +233,14 @@ QWidget *FirewallPage::buildLocationPanel(const QString &title,
         icon->setStyleSheet("background: transparent;");
         h->addWidget(icon, 0, Qt::AlignVCenter);
         h->addWidget(Win7::bodyLabel(info.netConnected ? info.networkName
-                                                       : QStringLiteral("None")),
+                                                       : QStringLiteral("无")),
                      0, Qt::AlignVCenter);
         h->addStretch(1);
         grid->addWidget(cell, r, 1, Qt::AlignLeft | Qt::AlignTop);
     }
     ++r;
 
-    grid->addWidget(Win7::bodyLabel("Notification state:"), r, 0);
+    grid->addWidget(Win7::bodyLabel("通知状态："), r, 0);
     grid->addWidget(Win7::bodyLabel(notifyText(info.logLevel)), r, 1);
     ++r;
 
@@ -294,8 +291,8 @@ FirewallPage::FirewallPage(QScrollArea *sidebar, QWidget *parent)
         contentV->addWidget(Win7::bodyLabel(text, /*link=*/true), 0, Qt::AlignLeft);
         contentV->addSpacing(4);
     };
-    addHelpLink("How does a firewall help protect my computer?");
-    addHelpLink("What are network locations?");
+    addHelpLink("防火墙如何帮助保护我的计算机？");
+    addHelpLink("什么是网络位置？");
 
     contentV->addSpacing(12);
 
@@ -304,8 +301,8 @@ FirewallPage::FirewallPage(QScrollArea *sidebar, QWidget *parent)
     // single "All networks" section expanded to the live ufw state. It is
     // "Connected" when a default route exists.
     contentV->addWidget(buildLocationPanel(
-        "All networks",
-        info.netConnected ? "Connected" : "Not Connected",
+        "所有网络",
+        info.netConnected ? "已连接" : "未连接",
         /*expanded=*/true, info));
 
     contentV->addStretch(1);

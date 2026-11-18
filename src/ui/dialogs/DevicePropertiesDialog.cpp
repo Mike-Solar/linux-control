@@ -1,5 +1,6 @@
 #include "DevicePropertiesDialog.h"
 #include "IconHelper.h"
+#include "UiText.h"
 
 #include <QTabWidget>
 #include <QVBoxLayout>
@@ -34,7 +35,7 @@ QLabel *plain(const QString &text) {
     return l;
 }
 
-QString valueOr(const QString &v, const QString &fallback = QStringLiteral("Unavailable")) {
+QString valueOr(const QString &v, const QString &fallback = QStringLiteral("不可用")) {
     QString t = v.trimmed();
     if (t.isEmpty() || t.startsWith('('))   // "(Standard monitor types)" etc.
         return fallback;
@@ -58,8 +59,8 @@ DevicePropertiesDialog::DevicePropertiesDialog(const ShellDevice &dev,
     layout->setSpacing(8);
 
     auto *tabs = new QTabWidget(this);
-    tabs->addTab(buildGeneralTab(), "General");
-    tabs->addTab(buildHardwareTab(), "Hardware");
+    tabs->addTab(buildGeneralTab(), "常规");
+    tabs->addTab(buildHardwareTab(), "硬件");
     layout->addWidget(tabs, 1);
 
     auto *buttons = new QDialogButtonBox(
@@ -106,7 +107,7 @@ QWidget *DevicePropertiesDialog::buildGeneralTab() {
     v->addLayout(header);
 
     // ---- Device Information ----------------------------------------------
-    auto *infoBox = new QGroupBox("Device Information");
+    auto *infoBox = new QGroupBox("设备信息");
     infoBox->setStyleSheet(kGroupStyle);
     auto *grid = new QGridLayout(infoBox);
     grid->setContentsMargins(12, 12, 12, 12);
@@ -125,21 +126,20 @@ QWidget *DevicePropertiesDialog::buildGeneralTab() {
         ++row;
     };
 
-    addRow("Manufacturer:", valueOr(m_dev.manufacturer));
-    addRow("Model:",        valueOr(m_dev.model.isEmpty() ? m_dev.name : m_dev.model));
-    addRow("Model number:", valueOr(m_dev.modelNumber));
-    addRow("Categories:",   valueOr(m_dev.category, QStringLiteral("Unknown")));
-    addRow("Description:",  valueOr(m_dev.description));
+    addRow("制造商：", valueOr(m_dev.manufacturer));
+    addRow("型号：",        valueOr(m_dev.model.isEmpty() ? m_dev.name : m_dev.model));
+    addRow("型号编号：", valueOr(m_dev.modelNumber));
+    addRow("类别：",   valueOr(m_dev.category, QStringLiteral("未知")));
+    addRow("描述：",  valueOr(m_dev.description));
     v->addWidget(infoBox);
 
     // ---- Device Tasks ----------------------------------------------------
-    auto *taskBox = new QGroupBox("Device Tasks");
+    auto *taskBox = new QGroupBox("设备任务");
     taskBox->setStyleSheet(kGroupStyle);
     auto *taskV = new QVBoxLayout(taskBox);
     taskV->setContentsMargins(12, 12, 12, 12);
     auto *taskText = new QLabel(
-        "To view tasks for this device, right-click the icon "
-        "for the device in Devices and Printers.");
+        "要查看此设备的任务，请右键单击“设备和打印机”中的设备图标。");
     taskText->setWordWrap(true);
     taskV->addWidget(taskText);
     v->addWidget(taskBox, 1);
@@ -169,11 +169,11 @@ QWidget *DevicePropertiesDialog::buildHardwareTab() {
     header->addWidget(nameLabel, 1);
     v->addLayout(header);
 
-    v->addWidget(new QLabel("Device Functions:"));
+    v->addWidget(new QLabel("设备功能："));
 
     auto *tree = new QTreeWidget;
     tree->setColumnCount(2);
-    tree->setHeaderLabels({"Name", "Type"});
+    tree->setHeaderLabels({"名称", "类型"});
     tree->setRootIsDecorated(false);
     tree->setSelectionMode(QAbstractItemView::SingleSelection);
     tree->header()->setSectionResizeMode(0, QHeaderView::Stretch);
@@ -183,12 +183,12 @@ QWidget *DevicePropertiesDialog::buildHardwareTab() {
     auto *fn = new QTreeWidgetItem(tree);
     fn->setIcon(0, resolveIcon(m_dev.iconName));
     fn->setText(0, m_dev.name);
-    fn->setText(1, valueOr(m_dev.category, QStringLiteral("Device")));
+    fn->setText(1, valueOr(m_dev.category, QStringLiteral("设备")));
     tree->setCurrentItem(fn);
     v->addWidget(tree);
 
     // ---- Device Function Summary -----------------------------------------
-    auto *summaryBox = new QGroupBox("Device Function Summary");
+    auto *summaryBox = new QGroupBox("设备功能摘要");
     summaryBox->setStyleSheet(kGroupStyle);
     auto *grid = new QGridLayout(summaryBox);
     grid->setContentsMargins(12, 12, 12, 12);
@@ -206,16 +206,16 @@ QWidget *DevicePropertiesDialog::buildHardwareTab() {
         grid->addWidget(val, row, 1, Qt::AlignTop | Qt::AlignLeft);
         ++row;
     };
-    addRow("Manufacturer:",  valueOr(m_dev.manufacturer));
-    addRow("Location:",      valueOr(m_dev.location, QStringLiteral("Unknown")));
-    addRow("Device status:", m_dev.status.isEmpty()
-               ? QStringLiteral("This device is working properly.")
-               : m_dev.status);
+    addRow("制造商：",  valueOr(m_dev.manufacturer));
+    addRow("位置：",      UiText::localize(valueOr(m_dev.location, QStringLiteral("未知"))));
+    addRow("设备状态：", m_dev.status.isEmpty()
+               ? QStringLiteral("此设备工作正常。")
+               : UiText::localize(m_dev.status));
     v->addWidget(summaryBox);
 
     auto *btnRow = new QHBoxLayout;
     btnRow->addStretch(1);
-    auto *propsBtn = new QPushButton("Properties");
+    auto *propsBtn = new QPushButton("属性");
     connect(propsBtn, &QPushButton::clicked, this,
             &DevicePropertiesDialog::showFunctionProperties);
     btnRow->addWidget(propsBtn);
@@ -277,16 +277,16 @@ void DevicePropertiesDialog::showFunctionProperties() {
         grid->addWidget(val, row, 1, Qt::AlignTop | Qt::AlignLeft);
         ++row;
     };
-    addRow("Device type:",  valueOr(m_dev.category, QStringLiteral("Hardware device")));
-    addRow("Manufacturer:", valueOr(m_dev.manufacturer));
-    addRow("Location:",     valueOr(m_dev.location, QStringLiteral("Unknown")));
+    addRow("设备类型：",  valueOr(m_dev.category, QStringLiteral("硬件设备")));
+    addRow("制造商：", valueOr(m_dev.manufacturer));
+    addRow("位置：",     UiText::localize(valueOr(m_dev.location, QStringLiteral("未知"))));
     if (!m_dev.driver.isEmpty())
-        addRow("Driver:", m_dev.driver
+        addRow("驱动程序：", m_dev.driver
                + (m_dev.driverVersion.isEmpty() ? QString()
                                                 : " (" + m_dev.driverVersion + ")"));
     v->addLayout(grid);
 
-    auto *statusBox = new QGroupBox("Device status");
+    auto *statusBox = new QGroupBox("设备状态");
     statusBox->setStyleSheet(kGroupStyle);
     auto *sv = new QVBoxLayout(statusBox);
     sv->setContentsMargins(10, 12, 10, 10);
@@ -294,13 +294,13 @@ void DevicePropertiesDialog::showFunctionProperties() {
     status->setReadOnly(true);
     status->setFixedHeight(84);
     status->setPlainText(m_dev.status.isEmpty()
-                             ? QStringLiteral("This device is working properly.")
-                             : m_dev.status);
+                             ? QStringLiteral("此设备工作正常。")
+                             : UiText::localize(m_dev.status));
     sv->addWidget(status);
     v->addWidget(statusBox);
     v->addStretch();
 
-    tabs->addTab(page, "General");
+    tabs->addTab(page, "常规");
     outer->addWidget(tabs, 1);
 
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok, &dlg);

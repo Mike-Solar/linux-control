@@ -2,6 +2,7 @@
 #include "AnalogClock.h"
 #include "IconHelper.h"
 #include "WindowsTimeZones.h"
+#include "UiText.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -128,8 +129,7 @@ QString dstNote(const QString &id)
 {
     const QTimeZone tz(id.toUtf8());
     if (!tz.isValid() || !tz.hasDaylightTime())
-        return QStringLiteral("This time zone does not observe Daylight Saving "
-                              "Time.");
+        return QStringLiteral("此时区不实行夏令时。");
 
     const QDateTime nowUtc = QDateTime::currentDateTimeUtc();
     const QTimeZone::OffsetData next = tz.nextTransition(nowUtc);
@@ -143,12 +143,11 @@ QString dstNote(const QString &id)
 
     const bool dstEnds = (next.daylightTimeOffset == 0);
     return QStringLiteral(
-               "Daylight Saving Time %1 on %2 at %3. The clock is set to go %4 "
-               "1 hour at that time.")
-        .arg(dstEnds ? QStringLiteral("ends") : QStringLiteral("begins"))
+               "夏令时将于 %2 %3 %1。届时时钟将%4 1 小时。")
+        .arg(dstEnds ? QStringLiteral("结束") : QStringLiteral("开始"))
         .arg(longDateNoWeekday(wall.date()))
         .arg(wall.toString(QStringLiteral("HH:mm")))
-        .arg(dstEnds ? QStringLiteral("back") : QStringLiteral("forward"));
+        .arg(dstEnds ? QStringLiteral("回拨") : QStringLiteral("前拨"));
 }
 
 // The Windows UAC "administrator" shield, drawn to mark privileged buttons.
@@ -209,7 +208,7 @@ DateTimeDialog::DateTimeDialog(QWidget *parent)
 {
     m_timezone = systemZoneId();
 
-    setWindowTitle(QStringLiteral("Date and Time"));
+    setWindowTitle(QStringLiteral("日期和时间"));
     setWindowIcon(themeIcon({"preferences-system-time", "clock",
                              "preferences-system"}));
     setModal(true);
@@ -222,9 +221,9 @@ DateTimeDialog::DateTimeDialog(QWidget *parent)
     root->setSpacing(8);
 
     m_tabs = new QTabWidget;
-    m_tabs->addTab(buildDateTimeTab(), QStringLiteral("Date and Time"));
-    m_tabs->addTab(buildAdditionalClocksTab(), QStringLiteral("Additional Clocks"));
-    m_tabs->addTab(buildInternetTimeTab(), QStringLiteral("Internet Time"));
+    m_tabs->addTab(buildDateTimeTab(), QStringLiteral("日期和时间"));
+    m_tabs->addTab(buildAdditionalClocksTab(), QStringLiteral("附加时钟"));
+    m_tabs->addTab(buildInternetTimeTab(), QStringLiteral("Internet 时间"));
     root->addWidget(m_tabs, 1);
 
     // OK / Cancel / Apply, right-aligned like the Windows dialog.
@@ -290,11 +289,11 @@ QWidget *DateTimeDialog::buildDateTimeTab()
     auto *info = new QVBoxLayout;
     info->setContentsMargins(0, 6, 0, 0);
     info->setSpacing(0);
-    info->addWidget(dtLabel(QStringLiteral("Date:")));
+    info->addWidget(dtLabel(QStringLiteral("日期：")));
     m_dateValue = dtLabel(QString());
     info->addWidget(m_dateValue);
     info->addSpacing(12);
-    info->addWidget(dtLabel(QStringLiteral("Time:")));
+    info->addWidget(dtLabel(QStringLiteral("时间：")));
     m_timeValue = dtLabel(QString());
     info->addWidget(m_timeValue);
     info->addStretch(1);
@@ -306,7 +305,7 @@ QWidget *DateTimeDialog::buildDateTimeTab()
     // shield, right-aligned like Windows.
     auto *changeDtRow = new QHBoxLayout;
     changeDtRow->addStretch(1);
-    auto *changeDt = new QPushButton(QStringLiteral("Change date and time…"));
+    auto *changeDt = new QPushButton(QStringLiteral("更改日期和时间…"));
     changeDt->setIcon(uacShieldIcon());
     changeDt->setCursor(Qt::PointingHandCursor);
     connect(changeDt, &QPushButton::clicked, this,
@@ -330,7 +329,7 @@ QWidget *DateTimeDialog::buildDateTimeTab()
         v->addLayout(row);
     };
 
-    addHeading(QStringLiteral("Time zone"));
+    addHeading(QStringLiteral("时区"));
     v->addSpacing(6);
 
     m_tzValue = dtLabel(QString());
@@ -340,7 +339,7 @@ QWidget *DateTimeDialog::buildDateTimeTab()
 
     auto *tzRow = new QHBoxLayout;
     tzRow->addStretch(1);
-    auto *changeTz = new QPushButton(QStringLiteral("Change time zone…"));
+    auto *changeTz = new QPushButton(QStringLiteral("更改时区…"));
     changeTz->setCursor(Qt::PointingHandCursor);
     connect(changeTz, &QPushButton::clicked, this,
             &DateTimeDialog::openChangeTimeZone);
@@ -353,7 +352,7 @@ QWidget *DateTimeDialog::buildDateTimeTab()
     v->addWidget(m_dstNote);
     v->addSpacing(8);
 
-    m_notifyCheck = new QCheckBox(QStringLiteral("Notify me when the clock changes"));
+    m_notifyCheck = new QCheckBox(QStringLiteral("时钟更改时通知我"));
     {
         QFont f = m_notifyCheck->font();
         f.setPointSize(9);
@@ -367,10 +366,10 @@ QWidget *DateTimeDialog::buildDateTimeTab()
     v->addStretch(1);
 
     v->addWidget(makeHelpLink(
-        QStringLiteral("Get more time zone information online")));
+        QStringLiteral("联机获取更多时区信息")));
     v->addSpacing(2);
     v->addWidget(makeHelpLink(
-        QStringLiteral("How do I set the clock and time zone?")));
+        QStringLiteral("如何设置时钟和时区？")));
 
     return page;
 }
@@ -386,9 +385,7 @@ QWidget *DateTimeDialog::buildAdditionalClocksTab()
     v->setSpacing(10);
 
     auto *intro = new QLabel(
-        QStringLiteral("Additional clocks can display the time in other time "
-                       "zones. You can view them by clicking on or hovering "
-                       "over the taskbar clock."));
+        QStringLiteral("附加时钟可以显示其他时区的时间。你可以通过单击或悬停在任务栏时钟上来查看它们。"));
     {
         QFont f = intro->font();
         f.setPointSize(9);
@@ -405,7 +402,7 @@ QWidget *DateTimeDialog::buildAdditionalClocksTab()
         // title, embedded in the top of a light framed rectangle, the same
         // hairline divider as the Time zone section, closed into a box like
         // Windows. Unchecking it disables the fields inside automatically.
-        auto *box = new QGroupBox(QStringLiteral("Show this clock"));
+        auto *box = new QGroupBox(QStringLiteral("显示此时钟"));
         box->setCheckable(true);
         box->setChecked(
             s.value(QStringLiteral("datetime/clock%1/show").arg(i), false).toBool());
@@ -427,28 +424,28 @@ QWidget *DateTimeDialog::buildAdditionalClocksTab()
         bv->setContentsMargins(18, 12, 14, 12);
         bv->setSpacing(4);
 
-        auto *tzLabel = new QLabel(QStringLiteral("Select time zone:"));
+        auto *tzLabel = new QLabel(QStringLiteral("选择时区："));
         { QFont f = tzLabel->font(); f.setPointSize(9); tzLabel->setFont(f); }
         bv->addWidget(tzLabel);
 
         auto *tzCombo = new QComboBox;
         for (const WinTimeZone &z : windowsTimeZones())
-            tzCombo->addItem(z.display, z.iana);
+            tzCombo->addItem(UiText::localize(z.display), z.iana);
         // Default the selection to the current zone.
         int cur = tzCombo->findData(m_timezone);
         if (cur < 0)
-            cur = tzCombo->findText(zoneLabel(m_timezone));
+            cur = tzCombo->findText(UiText::localize(zoneLabel(m_timezone)));
         tzCombo->setCurrentIndex(qMax(0, cur));
         bv->addWidget(tzCombo);
         bv->addSpacing(2);
 
-        auto *nameLabel = new QLabel(QStringLiteral("Enter display name:"));
+        auto *nameLabel = new QLabel(QStringLiteral("输入显示名称："));
         { QFont f = nameLabel->font(); f.setPointSize(9); nameLabel->setFont(f); }
         bv->addWidget(nameLabel);
 
         auto *nameEdit = new QLineEdit(
             s.value(QStringLiteral("datetime/clock%1/name").arg(i),
-                    QStringLiteral("Clock %1").arg(i)).toString());
+                    QStringLiteral("时钟 %1").arg(i)).toString());
         bv->addWidget(nameEdit);
 
         // Tag the widgets so saveSettings can find them; the checkable box
@@ -498,7 +495,7 @@ QWidget *DateTimeDialog::buildInternetTimeTab()
 
     auto *btnRow = new QHBoxLayout;
     btnRow->addStretch(1);
-    auto *change = new QPushButton(QStringLiteral("Change settings…"));
+    auto *change = new QPushButton(QStringLiteral("更改设置…"));
     change->setIcon(uacShieldIcon());
     change->setCursor(Qt::PointingHandCursor);
     connect(change, &QPushButton::clicked, this,
@@ -508,7 +505,7 @@ QWidget *DateTimeDialog::buildInternetTimeTab()
     v->addSpacing(10);
 
     v->addWidget(makeHelpLink(
-        QStringLiteral("What is Internet time synchronization?")));
+        QStringLiteral("什么是 Internet 时间同步？")));
 
     return page;
 }
@@ -524,7 +521,7 @@ void DateTimeDialog::refreshDateTime()
     if (m_clock)
         m_clock->update();
     if (m_tzValue)
-        m_tzValue->setText(zoneLabel(m_timezone));
+        m_tzValue->setText(UiText::localize(zoneLabel(m_timezone)));
     if (m_dstNote)
         m_dstNote->setText(dstNote(m_timezone));
 }
@@ -536,17 +533,13 @@ void DateTimeDialog::refreshInternetStatus()
         const QString server = ntpServer();
         m_internetStatus->setText(
             server.isEmpty()
-                ? QStringLiteral("This computer is set to automatically "
-                                 "synchronize with an Internet time server.")
-                : QStringLiteral("This computer is set to automatically "
-                                 "synchronize with '%1'.").arg(server));
+                ? QStringLiteral("此计算机已设置为自动与 Internet 时间服务器同步。")
+                : QStringLiteral("此计算机已设置为自动与“%1”同步。").arg(server));
         m_internetSched->setText(
-            QStringLiteral("This computer is set to automatically synchronize "
-                           "on a scheduled basis."));
+            QStringLiteral("此计算机已设置为按计划自动同步。"));
     } else {
         m_internetStatus->setText(
-            QStringLiteral("This computer is not set to automatically "
-                           "synchronize with an Internet time server."));
+            QStringLiteral("此计算机未设置为自动与 Internet 时间服务器同步。"));
         m_internetSched->clear();
     }
 }
@@ -563,7 +556,7 @@ void DateTimeDialog::runPrivileged(const QStringList &argv,
                         QString::fromUtf8(proc->readAllStandardError()).trimmed();
                     // Exit 126/127 == polkit auth dismissed/failed; stay quiet.
                     if (!err.isEmpty() && code != 126 && code != 127)
-                        QMessageBox::warning(this, QStringLiteral("Date and Time"),
+                        QMessageBox::warning(this, QStringLiteral("日期和时间"),
                                              err);
                 }
                 if (onDone)
@@ -576,7 +569,7 @@ void DateTimeDialog::runPrivileged(const QStringList &argv,
 void DateTimeDialog::openChangeDateTime()
 {
     QDialog dlg(this);
-    dlg.setWindowTitle(QStringLiteral("Date and Time Settings"));
+    dlg.setWindowTitle(QStringLiteral("日期和时间设置"));
     dlg.setModal(true);
     auto *v = new QVBoxLayout(&dlg);
     v->setContentsMargins(16, 16, 16, 12);
@@ -612,8 +605,7 @@ void DateTimeDialog::openChangeDateTime()
     hint->setStyleSheet("color: #555555;");
     if (ntpEnabled())
         hint->setText(QStringLiteral(
-            "Internet time synchronization is on; turn it off in the Internet "
-            "Time tab before setting the clock manually."));
+            "Internet 时间同步已开启；手动设置时钟前，请在“Internet 时间”选项卡中将其关闭。"));
     hint->setWordWrap(true);
     v->addWidget(hint);
 
@@ -636,23 +628,23 @@ void DateTimeDialog::openChangeDateTime()
 void DateTimeDialog::openChangeTimeZone()
 {
     QDialog dlg(this);
-    dlg.setWindowTitle(QStringLiteral("Time Zone Settings"));
+    dlg.setWindowTitle(QStringLiteral("时区设置"));
     dlg.setModal(true);
     auto *v = new QVBoxLayout(&dlg);
     v->setContentsMargins(16, 16, 16, 12);
     v->setSpacing(10);
 
-    auto *label = new QLabel(QStringLiteral("Time zone:"));
+    auto *label = new QLabel(QStringLiteral("时区："));
     v->addWidget(label);
 
     auto *combo = new QComboBox;
     for (const WinTimeZone &z : windowsTimeZones())
-        combo->addItem(z.display, z.iana);
+        combo->addItem(UiText::localize(z.display), z.iana);
     int cur = combo->findData(m_timezone);
     if (cur < 0) {
         // The system zone isn't one of the grouped Windows zones: add it so the
         // current setting is always represented and selectable.
-        combo->addItem(zoneLabel(m_timezone), m_timezone);
+        combo->addItem(UiText::localize(zoneLabel(m_timezone)), m_timezone);
         cur = combo->count() - 1;
     }
     combo->setCurrentIndex(cur);
@@ -660,7 +652,7 @@ void DateTimeDialog::openChangeTimeZone()
     v->addSpacing(6);
 
     auto *dst = new QCheckBox(
-        QStringLiteral("Automatically adjust clock for Daylight Saving Time"));
+        QStringLiteral("自动调整时钟以适应夏令时"));
     dst->setChecked(true);
     dst->setEnabled(false);   // IANA zones handle DST automatically
     v->addWidget(dst);
@@ -690,22 +682,22 @@ void DateTimeDialog::openChangeTimeZone()
 void DateTimeDialog::openInternetSettings()
 {
     QDialog dlg(this);
-    dlg.setWindowTitle(QStringLiteral("Internet Time Settings"));
+    dlg.setWindowTitle(QStringLiteral("Internet 时间设置"));
     dlg.setModal(true);
     auto *v = new QVBoxLayout(&dlg);
     v->setContentsMargins(16, 16, 16, 12);
     v->setSpacing(10);
 
-    v->addWidget(new QLabel(QStringLiteral("Configure Internet time settings:")));
+    v->addWidget(new QLabel(QStringLiteral("配置 Internet 时间设置：")));
 
     auto *sync = new QCheckBox(
-        QStringLiteral("Synchronize with an Internet time server"));
+        QStringLiteral("与 Internet 时间服务器同步"));
     sync->setChecked(ntpEnabled());
     v->addWidget(sync);
 
     auto *serverRow = new QHBoxLayout;
     serverRow->setSpacing(8);
-    auto *serverLabel = new QLabel(QStringLiteral("Server:"));
+    auto *serverLabel = new QLabel(QStringLiteral("服务器："));
     serverRow->addWidget(serverLabel);
     auto *serverCombo = new QComboBox;
     serverCombo->setEditable(true);
@@ -720,7 +712,7 @@ void DateTimeDialog::openInternetSettings()
         serverCombo->setCurrentText(curServer);
     }
     serverRow->addWidget(serverCombo, 1);
-    auto *update = new QPushButton(QStringLiteral("Update now"));
+    auto *update = new QPushButton(QStringLiteral("立即更新"));
     serverRow->addWidget(update);
     v->addLayout(serverRow);
 
@@ -750,8 +742,7 @@ void DateTimeDialog::openInternetSettings()
     note->setWordWrap(true);
     note->setStyleSheet("color: #555555;");
     note->setText(QStringLiteral(
-        "This computer is set to automatically synchronize on a scheduled "
-        "basis."));
+        "此计算机已设置为按计划自动同步。"));
     v->addWidget(note);
 
     v->addStretch(1);

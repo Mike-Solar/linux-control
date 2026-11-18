@@ -82,8 +82,8 @@ inline void launchDetached(QWidget *parent, const QStringList &cmd)
     QStringList args = cmd;
     const QString program = args.takeFirst();
     if (QStandardPaths::findExecutable(program).isEmpty()) {
-        QMessageBox::warning(parent, QStringLiteral("Control Panel"),
-            QStringLiteral("\"%1\" is not installed.").arg(program));
+        QMessageBox::warning(parent, QStringLiteral("控制面板"),
+            QStringLiteral("未安装“%1”。").arg(program));
         return;
     }
     QProcess::startDetached(program, args);

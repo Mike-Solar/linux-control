@@ -159,7 +159,7 @@ QString SoundDialog::defaultDevice(bool sinks) const
 SoundDialog::SoundDialog(QWidget *parent)
     : QDialog(parent)
 {
-    setWindowTitle(QStringLiteral("Sound"));
+    setWindowTitle(QStringLiteral("声音"));
     setWindowIcon(themeIcon({"preferences-desktop-sound", "audio-card",
                              "multimedia-volume-control"}));
     setModal(true);
@@ -171,13 +171,13 @@ SoundDialog::SoundDialog(QWidget *parent)
 
     m_tabs = new QTabWidget;
     m_tabs->addTab(buildDeviceTab(m_playback, true,
-        QStringLiteral("Select a playback device below to modify its settings:")),
-        QStringLiteral("Playback"));
+        QStringLiteral("在下面选择一个播放设备以修改其设置：")),
+        QStringLiteral("播放"));
     m_tabs->addTab(buildDeviceTab(m_recording, false,
-        QStringLiteral("Select a recording device below to modify its settings:")),
-        QStringLiteral("Recording"));
-    m_tabs->addTab(buildSoundsTab(), QStringLiteral("Sounds"));
-    m_tabs->addTab(buildCommunicationsTab(), QStringLiteral("Communications"));
+        QStringLiteral("在下面选择一个录制设备以修改其设置：")),
+        QStringLiteral("录制"));
+    m_tabs->addTab(buildSoundsTab(), QStringLiteral("声音"));
+    m_tabs->addTab(buildCommunicationsTab(), QStringLiteral("通信"));
     root->addWidget(m_tabs, 1);
 
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok
@@ -250,40 +250,40 @@ QWidget *SoundDialog::buildDeviceTab(DeviceList &dl, bool sinks,
     btnRow->setContentsMargins(0, 0, 0, 0);
     btnRow->setSpacing(8);
 
-    dl.configureBtn = new QPushButton(QStringLiteral("Configure"));
+    dl.configureBtn = new QPushButton(QStringLiteral("配置"));
     dl.configureBtn->setCursor(Qt::PointingHandCursor);
     btnRow->addWidget(dl.configureBtn);
     btnRow->addStretch(1);
 
     dl.setDefaultBtn = new QToolButton;
-    dl.setDefaultBtn->setText(QStringLiteral("Set Default"));
+    dl.setDefaultBtn->setText(QStringLiteral("设为默认值"));
     dl.setDefaultBtn->setToolButtonStyle(Qt::ToolButtonTextOnly);
     dl.setDefaultBtn->setPopupMode(QToolButton::MenuButtonPopup);
     dl.setDefaultBtn->setCursor(Qt::PointingHandCursor);
     auto *menu = new QMenu(dl.setDefaultBtn);
-    menu->addAction(QStringLiteral("Default Device"),
+    menu->addAction(QStringLiteral("默认设备"),
                     this, [this, &dl]() { applyDefault(dl); });
-    menu->addAction(QStringLiteral("Default Communication Device"),
+    menu->addAction(QStringLiteral("默认通信设备"),
                     this, [this, &dl]() { applyDefault(dl); });
     dl.setDefaultBtn->setMenu(menu);
     connect(dl.setDefaultBtn, &QToolButton::clicked,
             this, [this, &dl]() { applyDefault(dl); });
     btnRow->addWidget(dl.setDefaultBtn);
 
-    dl.propertiesBtn = new QPushButton(QStringLiteral("Properties"));
+    dl.propertiesBtn = new QPushButton(QStringLiteral("属性"));
     dl.propertiesBtn->setCursor(Qt::PointingHandCursor);
     connect(dl.propertiesBtn, &QPushButton::clicked, this, [this, &dl]() {
         if (dl.selected < 0 || dl.selected >= dl.devices.size())
             return;
         const Device &d = dl.devices[dl.selected];
-        QMessageBox::information(this, QStringLiteral("%1 Properties")
+        QMessageBox::information(this, QStringLiteral("%1 属性")
                                      .arg(d.description),
-            QStringLiteral("%1\n%2\n\nVolume: %3%%4")
+            QStringLiteral("%1\n%2\n\n音量：%3%%4")
                 .arg(d.description)
-                .arg(d.cardName.isEmpty() ? QStringLiteral("Audio Device")
+                .arg(d.cardName.isEmpty() ? QStringLiteral("音频设备")
                                           : d.cardName)
                 .arg(d.volumePercent)
-                .arg(d.muted ? QStringLiteral("  (muted)") : QString()));
+                .arg(d.muted ? QStringLiteral("  （静音）") : QString()));
     });
     btnRow->addWidget(dl.propertiesBtn);
 
@@ -325,8 +325,8 @@ void SoundDialog::rebuildRows(DeviceList &dl)
 
     if (dl.devices.isEmpty()) {
         auto *empty = new QLabel(dl.sinks
-            ? QStringLiteral("No playback devices were found.")
-            : QStringLiteral("No recording devices were found."));
+            ? QStringLiteral("未找到播放设备。")
+            : QStringLiteral("未找到录制设备。"));
         empty->setStyleSheet("color: #555555; padding: 14px;");
         dl.box->addWidget(empty);
         dl.box->addStretch(1);
@@ -368,14 +368,14 @@ void SoundDialog::rebuildRows(DeviceList &dl)
 
         QString cardLine = d.cardName;
         if (cardLine.isEmpty() || cardLine == d.description)
-            cardLine = QStringLiteral("Audio Device");
+            cardLine = QStringLiteral("音频设备");
         auto *card = new QLabel(cardLine);
         { QFont f = card->font(); f.setPointSize(9); card->setFont(f); }
         card->setStyleSheet("color: #333333; background: transparent;");
         textCol->addWidget(card);
 
-        auto *status = new QLabel(isDefault ? QStringLiteral("Default Device")
-                                            : QStringLiteral("Ready"));
+        auto *status = new QLabel(isDefault ? QStringLiteral("默认设备")
+                                            : QStringLiteral("就绪"));
         { QFont f = status->font(); f.setPointSize(9); status->setFont(f); }
         status->setStyleSheet("color: #333333; background: transparent;");
         textCol->addWidget(status);
@@ -508,7 +508,7 @@ QWidget *SoundDialog::buildSoundsTab()
                          "Linux. You can select an existing scheme or save one "
                          "you have modified."));
 
-    auto *schemeLabel = new QLabel(QStringLiteral("Sound Scheme:"));
+    auto *schemeLabel = new QLabel(QStringLiteral("声音方案："));
     { QFont f = schemeLabel->font(); f.setPointSize(9); schemeLabel->setFont(f); }
     v->addWidget(schemeLabel);
 
@@ -516,24 +516,22 @@ QWidget *SoundDialog::buildSoundsTab()
     schemeRow->setSpacing(8);
     auto *scheme = new QComboBox;
     scheme->addItems({ Branding::brand("Linux Default"),
-                       QStringLiteral("No Sounds") });
+                       QStringLiteral("无声") });
     scheme->setCurrentIndex(
         s.value(QStringLiteral("sound/scheme"), 0).toInt());
     scheme->setObjectName(QStringLiteral("soundScheme"));
     schemeRow->addWidget(scheme, 1);
-    auto *saveAs = new QPushButton(QStringLiteral("Save As…"));
+    auto *saveAs = new QPushButton(QStringLiteral("另存为…"));
     schemeRow->addWidget(saveAs);
-    auto *del = new QPushButton(QStringLiteral("Delete"));
+    auto *del = new QPushButton(QStringLiteral("删除"));
     del->setEnabled(false);
     schemeRow->addWidget(del);
     v->addLayout(schemeRow);
     v->addSpacing(2);
 
-    para(QStringLiteral("To change sounds, click a program event in the "
-                        "following list and then select a sound to apply. You "
-                        "can save the changes as a new sound scheme."));
+    para(QStringLiteral("要更改声音，请单击下面列表中的程序事件，然后选择要应用的声音。你可以将更改保存为新的声音方案。"));
 
-    auto *eventsLabel = new QLabel(QStringLiteral("Program Events:"));
+    auto *eventsLabel = new QLabel(QStringLiteral("程序事件："));
     { QFont f = eventsLabel->font(); f.setPointSize(9); eventsLabel->setFont(f); }
     v->addWidget(eventsLabel);
 
@@ -544,11 +542,11 @@ QWidget *SoundDialog::buildSoundsTab()
     auto *rootItem = new QTreeWidgetItem(tree, { Branding::os() });
     rootItem->setIcon(0, themeIcon({"computer", "start-here"}));
     const QStringList events = {
-        "Asterisk", "Close Program", "Critical Battery Alarm", "Critical Stop",
-        "Default Beep", "Desktop Mail Notification", "Device Connect",
-        "Device Disconnect", "Device Failed to Connect", "Empty Recycle Bin",
-        "Exclamation", "Low Battery Alarm", "New Fax Sound",
-        "Notification", "System Notification", "Windows Logoff",
+        "星号", "关闭程序", "严重电池警报", "严重停止",
+        "默认提示音", "桌面邮件通知", "设备连接",
+        "设备断开连接", "设备连接失败", "清空回收站",
+        "感叹号", "电池电量不足警报", "新传真声音",
+        "通知", "系统通知", "Windows 注销",
     };
     const QIcon evIcon = themeIcon({"audio-volume-high", "audio-speakers"});
     for (const QString &e : events) {
@@ -565,16 +563,16 @@ QWidget *SoundDialog::buildSoundsTab()
     startup->setObjectName(QStringLiteral("startupSound"));
     v->addWidget(startup);
 
-    auto *soundsLabel = new QLabel(QStringLiteral("Sounds:"));
+    auto *soundsLabel = new QLabel(QStringLiteral("声音："));
     { QFont f = soundsLabel->font(); f.setPointSize(9); soundsLabel->setFont(f); }
     v->addWidget(soundsLabel);
 
     auto *soundsRow = new QHBoxLayout;
     soundsRow->setSpacing(8);
     auto *soundsCombo = new QComboBox;
-    soundsCombo->addItem(QStringLiteral("(None)"));
+    soundsCombo->addItem(QStringLiteral("(无)"));
     soundsRow->addWidget(soundsCombo, 1);
-    auto *test = new QPushButton(QStringLiteral("Test"));
+    auto *test = new QPushButton(QStringLiteral("测试"));
     test->setIcon(themeIcon({"media-playback-start"}));
     connect(test, &QPushButton::clicked, this, []() {
         // Best-effort preview of a system sound.
@@ -589,7 +587,7 @@ QWidget *SoundDialog::buildSoundsTab()
         }
     });
     soundsRow->addWidget(test);
-    auto *browse = new QPushButton(QStringLiteral("Browse…"));
+    auto *browse = new QPushButton(QStringLiteral("浏览…"));
     soundsRow->addWidget(browse);
     v->addLayout(soundsRow);
 
@@ -638,10 +636,10 @@ QWidget *SoundDialog::buildCommunicationsTab()
 
     auto *group = new QButtonGroup(this);
     const QStringList options = {
-        QStringLiteral("Mute all other sounds"),
-        QStringLiteral("Reduce the volume of other sounds by 80%"),
-        QStringLiteral("Reduce the volume of other sounds by 50%"),
-        QStringLiteral("Do nothing"),
+        QStringLiteral("将其他所有声音静音"),
+        QStringLiteral("将其他声音的音量降低 80%"),
+        QStringLiteral("将其他声音的音量降低 50%"),
+        QStringLiteral("不执行任何操作"),
     };
     QSettings s;
     const int chosen = s.value(QStringLiteral("sound/communications"), 1).toInt();

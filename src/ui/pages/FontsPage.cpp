@@ -213,7 +213,7 @@ FontsPage::FontsPage(QScrollArea *sidebar, QWidget *parent)
     headerV->setContentsMargins(28, 0, 28, 0);
     headerV->setSpacing(0);
     auto *pageTitle = Win7::pageTitle(
-        "Preview, delete, or show and hide the fonts installed on your computer");
+        "预览、删除或显示和隐藏计算机上安装的字体");
     pageTitle->setWordWrap(true);
     headerV->addWidget(pageTitle);
     contentV->addLayout(headerV);
@@ -222,7 +222,7 @@ FontsPage::FontsPage(QScrollArea *sidebar, QWidget *parent)
     // "Organize" command bar spanning the content width.
     QHBoxLayout *cmdH = nullptr;
     auto *cmdBar = Win7::commandBar(&cmdH);
-    cmdH->addWidget(Win7::dropdownLabel("Organize"));
+    cmdH->addWidget(Win7::dropdownLabel("组织"));
     cmdH->addStretch(1);
     Win7::addCommandBarIcons(cmdH);
     contentV->addWidget(cmdBar);
@@ -248,7 +248,7 @@ FontsPage::FontsPage(QScrollArea *sidebar, QWidget *parent)
     grid->setRowStretch(m_families.size() / kColumns + 1, 1);
 
     if (m_families.isEmpty()) {
-        auto *empty = new QLabel("No fonts were found.");
+        auto *empty = new QLabel("未找到字体。");
         QFont f = empty->font();
         f.setPointSize(9);
         empty->setFont(f);
@@ -273,7 +273,7 @@ FontsPage::FontsPage(QScrollArea *sidebar, QWidget *parent)
     folderIcon->setStyleSheet("color: #3A6EA5; background: transparent;");
     statusH->addWidget(folderIcon, 0, Qt::AlignVCenter);
 
-    statusH->addWidget(Win7::label(QStringLiteral("%1 items").arg(m_families.size()),
+    statusH->addWidget(Win7::label(QStringLiteral("%1 个项目").arg(m_families.size()),
                                    9, "#333333"),
                        0, Qt::AlignVCenter);
     statusH->addStretch(1);

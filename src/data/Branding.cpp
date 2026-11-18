@@ -1,4 +1,5 @@
 #include "Branding.h"
+#include "UiText.h"
 
 #include <QSettings>
 #include <QRegularExpression>
@@ -54,9 +55,11 @@ QString os()
 
 QString brand(const QString &canonical)
 {
+    // Canonical data-table text is localized only for display; routing keys and
+    // comparisons keep using the English originals.
+    QString out = UiText::localize(canonical);
     if (!useWindowsNames())
-        return canonical;
-    QString out = canonical;
+        return out;
     out.replace(QRegularExpression(QStringLiteral("\\bLinux\\b")),
                 QStringLiteral("Windows"));
     return out;

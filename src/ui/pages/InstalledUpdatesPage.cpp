@@ -1,6 +1,7 @@
 #include "InstalledUpdatesPage.h"
 #include "IconHelper.h"
 #include "Win7Ui.h"
+#include "UiText.h"
 
 #include <QScrollArea>
 #include <QLabel>
@@ -125,10 +126,10 @@ InstalledUpdatesPage::InstalledUpdatesPage(QScrollArea *sidebar, QWidget *parent
     auto *headerV = new QVBoxLayout;
     headerV->setContentsMargins(28, 0, 28, 0);
     headerV->setSpacing(0);
-    headerV->addWidget(Win7::pageTitle("Uninstall an update"));
+    headerV->addWidget(Win7::pageTitle("卸载更新"));
     headerV->addSpacing(8);
     headerV->addWidget(Win7::label(
-        "To uninstall an update, select it from the list and then click Uninstall or Change."));
+        "要卸载更新，请从列表中选择它，然后单击“卸载”或“更改”。"));
     contentV->addLayout(headerV);
     contentV->addSpacing(12);
     contentV->addWidget(Win7::hSeparator());
@@ -136,7 +137,7 @@ InstalledUpdatesPage::InstalledUpdatesPage(QScrollArea *sidebar, QWidget *parent
     // "Organize" command bar
     QHBoxLayout *toolH = nullptr;
     auto *toolBar = Win7::commandBar(&toolH);
-    toolH->addWidget(Win7::dropdownLabel("Organize"));
+    toolH->addWidget(Win7::dropdownLabel("组织"));
     toolH->addStretch(1);
     Win7::addCommandBarIcons(toolH);
     contentV->addWidget(toolBar);
@@ -144,7 +145,7 @@ InstalledUpdatesPage::InstalledUpdatesPage(QScrollArea *sidebar, QWidget *parent
     // Updates tree
     m_tree = new QTreeWidget;
     m_tree->setColumnCount(4);
-    m_tree->setHeaderLabels({ "Name", "Program", "Version", "Publisher" });
+    m_tree->setHeaderLabels({ "名称", "程序", "版本", "发布者" });
     m_tree->setItemsExpandable(false);
     Win7::configureListTree(m_tree);
     m_tree->header()->setSectionResizeMode(0, QHeaderView::Interactive);
@@ -155,7 +156,7 @@ InstalledUpdatesPage::InstalledUpdatesPage(QScrollArea *sidebar, QWidget *parent
     m_tree->setColumnWidth(2, 90);
 
     // Placeholder shown until the worker thread finishes gathering (see below).
-    Win7::addTreePlaceholder(m_tree, "Searching for installed updates...");
+    Win7::addTreePlaceholder(m_tree, "正在搜索已安装的更新...");
     contentV->addWidget(m_tree, 1);
 
     // Status bar: item count
@@ -167,7 +168,7 @@ InstalledUpdatesPage::InstalledUpdatesPage(QScrollArea *sidebar, QWidget *parent
                                      "preferences-system"}).pixmap(24, 24));
     statusH->addWidget(statusIcon);
 
-    m_countLbl = Win7::label("0 items", 9, "#1F1F1F");
+    m_countLbl = Win7::label("0 个项目", 9, "#1F1F1F");
     statusH->addWidget(m_countLbl);
     statusH->addStretch(1);
     contentV->addWidget(statusBar);
@@ -231,16 +232,16 @@ void InstalledUpdatesPage::populate(const QList<UpdateInfo> &updatesIn)
         for (const UpdateInfo &u : items) {
             auto *child = new QTreeWidgetItem(group);
             child->setIcon(0, updateIcon);
-            child->setText(0, QString("Update for %1 (%2)").arg(u.name, u.version));
+            child->setText(0, QString("%1 的更新 (%2)").arg(u.name, u.version));
             child->setText(1, u.name);
             child->setText(2, u.version);
-            child->setText(3, u.publisher);
+            child->setText(3, UiText::localize(u.publisher));
             Win7::setItemPointSize(child);
             ++totalItems;
         }
     }
     m_tree->expandAll();
 
-    m_countLbl->setText(QString("%1 item%2")
+    m_countLbl->setText(QString("%1 个项目")
                             .arg(totalItems).arg(totalItems == 1 ? "" : "s"));
 }

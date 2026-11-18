@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Control Panel
+Name[zh_CN]=控制面板
 Comment=Adjust your computer's settings
+Comment[zh_CN]=调整计算机的设置
 Exec=control
 Icon=preferences-system
 Terminal=false

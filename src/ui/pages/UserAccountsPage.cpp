@@ -3,6 +3,7 @@
 #include "LinkLabel.h"
 #include "IconHelper.h"
 #include "Win7Ui.h"
+#include "UiText.h"
 
 #include <QScrollArea>
 #include <QLabel>
@@ -137,7 +138,7 @@ UserAccountsPage::UserAccountsPage(QScrollArea *sidebar, QWidget *parent)
                                         /*fixedWidth=*/700);
 
     // Page title.
-    contentV->addWidget(Win7::pageTitle("Make changes to your user account"));
+    contentV->addWidget(Win7::pageTitle("更改你的用户帐户"));
     contentV->addSpacing(18);
 
     // Body: task links on the left, the account summary card on the right.
@@ -159,12 +160,12 @@ UserAccountsPage::UserAccountsPage(QScrollArea *sidebar, QWidget *parent)
         tasks->addWidget(link, 0, Qt::AlignLeft);
     };
 
-    addTask("Change your password");
-    addTask("Change your picture");
-    addTask("Change your account name");
-    addTask("Change your account type");
-    addTask("Manage another account");
-    addTask("Change User Account Control settings");
+    addTask("更改密码");
+    addTask("更改图片");
+    addTask("更改帐户名称");
+    addTask("更改帐户类型");
+    addTask("管理其他帐户");
+    addTask("更改用户帐户控制设置");
 
     tasks->addStretch(1);
     body->addLayout(tasks, 0);
@@ -184,8 +185,8 @@ UserAccountsPage::UserAccountsPage(QScrollArea *sidebar, QWidget *parent)
     summary->setContentsMargins(0, 2, 0, 0);
     summary->setSpacing(2);
     summary->addWidget(Win7::label(acct.fullName, 11, "#1A3C7A"));
-    summary->addWidget(Win7::label(acct.accountType));
-    summary->addWidget(Win7::label("Password protected"));
+    summary->addWidget(Win7::label(UiText::localize(acct.accountType)));
+    summary->addWidget(Win7::label("受密码保护"));
     summary->addStretch(1);
     card->addLayout(summary, 0);
 

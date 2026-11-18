@@ -3,6 +3,7 @@
 #include "IconHelper.h"
 #include "Win7Ui.h"
 #include "Branding.h"
+#include "UiText.h"
 #include "dialogs/LinverConfigDialog.h"
 #include "perf/WeiBenchmark.h"
 
@@ -179,7 +180,7 @@ SystemPage::SysInfo SystemPage::gatherInfo()
                 int installedGiB = static_cast<int>(std::ceil(usableGiB));
                 if (installedGiB % 2)
                     ++installedGiB;
-                s.memory = QStringLiteral("%1 GB (%2 GB usable)")
+                s.memory = QStringLiteral("%1 GB（%2 GB 可用）")
                                .arg(installedGiB)
                                .arg(usableGiB, 0, 'f', 1);
                 break;
@@ -190,7 +191,7 @@ SystemPage::SysInfo SystemPage::gatherInfo()
     // System type
     const QString arch = QSysInfo::currentCpuArchitecture();
     const bool is64 = (QSysInfo::WordSize == 64);
-    s.systemType = QStringLiteral("%1-bit Operating System (%2)")
+    s.systemType = QStringLiteral("%1 位操作系统 (%2)")
                        .arg(is64 ? 64 : 32)
                        .arg(arch);
 
@@ -328,7 +329,7 @@ SystemPage::SystemPage(QScrollArea *sidebar, QWidget *parent)
 
     // Page title.
     contentV->addWidget(
-        Win7::pageTitle("View basic information about your computer"));
+        Win7::pageTitle("查看有关计算机的基本信息"));
     contentV->addSpacing(18);
 
     // Section heading with an optional `trailing` widget (e.g. a "Change
@@ -360,7 +361,7 @@ SystemPage::SystemPage(QScrollArea *sidebar, QWidget *parent)
     editionCol->addWidget(Win7::label(
         Branding::editionName(info.edition)));
     editionCol->addWidget(Win7::label(
-        QString::fromUtf8("Copyright © %1  %2.  All rights reserved.")
+        QString::fromUtf8("版权所有 © %1  %2。保留所有权利。")
             .arg(Branding::copyrightYear())
             .arg(Branding::copyrightHolder(info.vendor))));
     editionCol->addWidget(Win7::label(
@@ -375,7 +376,7 @@ SystemPage::SystemPage(QScrollArea *sidebar, QWidget *parent)
     m_logoLabel->setFixedSize(96, 96);
     m_logoLabel->setStyleSheet("background: transparent;");
     m_logoLabel->setCursor(Qt::PointingHandCursor);
-    m_logoLabel->setToolTip(QStringLiteral("Configure branding"));
+    m_logoLabel->setToolTip(QStringLiteral("配置品牌"));
     if (Branding::fakeBadgeActive()) {
         // The orb-backed Windows 7 logo. The theme only draws the orb at <=48px
         // (its 256px raster is the bare flag), so this upscales the 48px orb.
@@ -393,7 +394,7 @@ SystemPage::SystemPage(QScrollArea *sidebar, QWidget *parent)
     contentV->addSpacing(16);
 
     // System
-    addHeading("System");
+    addHeading("系统");
 
     auto *sysGrid = new QGridLayout;
     sysGrid->setContentsMargins(14, 0, 0, 0);
@@ -410,20 +411,20 @@ SystemPage::SystemPage(QScrollArea *sidebar, QWidget *parent)
               .arg(wei.baseScore, 0, 'f', 1)
               .arg(Branding::brand("Linux Experience Index"))
         : Branding::brand("Linux Experience Index is not available");
-    m_ratingLabel = addInfoRow(sysGrid, r++, "Rating:", ratingText,
+    m_ratingLabel = addInfoRow(sysGrid, r++, "分级：", ratingText,
                                QString(), /*valueIsLink=*/true);
     m_ratingLabel->installEventFilter(this);
-    addInfoRow(sysGrid, r++, "Processor:", info.processor, info.clock);
-    addInfoRow(sysGrid, r++, "Installed memory (RAM):", info.memory);
-    addInfoRow(sysGrid, r++, "System type:", info.systemType);
-    addInfoRow(sysGrid, r++, "Pen and Touch:",
-               "No Pen or Touch Input is available for this Display");
+    addInfoRow(sysGrid, r++, "处理器：", UiText::localize(info.processor), info.clock);
+    addInfoRow(sysGrid, r++, "安装的内存 (RAM)：", info.memory);
+    addInfoRow(sysGrid, r++, "系统类型：", info.systemType);
+    addInfoRow(sysGrid, r++, "笔和触控：",
+               "此显示器没有可用的笔或触控输入");
 
     contentV->addLayout(sysGrid);
     contentV->addSpacing(16);
 
     // Computer name, domain, and workgroup settings
-    addHeading("Computer name, domain, and workgroup settings");
+    addHeading("计算机名、域和工作组设置");
 
     auto *nameGrid = new QGridLayout;
     nameGrid->setContentsMargins(14, 0, 0, 0);
@@ -432,13 +433,13 @@ SystemPage::SystemPage(QScrollArea *sidebar, QWidget *parent)
     nameGrid->setColumnStretch(1, 1);
 
     r = 0;
-    addInfoRow(nameGrid, r++, "Computer name:", info.hostName);
-    addInfoRow(nameGrid, r++, "Full computer name:", info.hostName);
-    addInfoRow(nameGrid, r++, "Computer description:", QString());
-    addInfoRow(nameGrid, r++, "Workgroup:", "WORKGROUP");
+    addInfoRow(nameGrid, r++, "计算机名：", info.hostName);
+    addInfoRow(nameGrid, r++, "完整的计算机名：", info.hostName);
+    addInfoRow(nameGrid, r++, "计算机描述：", QString());
+    addInfoRow(nameGrid, r++, "工作组：", "WORKGROUP");
 
     // "Change settings" sits at the right edge, on the "Computer name:" row.
-    nameGrid->addWidget(Win7::bodyLabel("Change settings", /*link=*/true),
+    nameGrid->addWidget(Win7::bodyLabel("更改设置", /*link=*/true),
                         0, 2, Qt::AlignRight | Qt::AlignVCenter);
 
     contentV->addLayout(nameGrid);
@@ -455,7 +456,7 @@ SystemPage::SystemPage(QScrollArea *sidebar, QWidget *parent)
 
     actGrid->addWidget(Win7::label(Branding::brand("Linux is activated")),
                        0, 0, 1, 2);
-    addInfoRow(actGrid, 1, "Product ID:", info.productId);
+    addInfoRow(actGrid, 1, "产品 ID：", info.productId);
 
     contentV->addLayout(actGrid);
 

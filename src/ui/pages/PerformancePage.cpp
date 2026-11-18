@@ -21,11 +21,11 @@ namespace {
 // The five WEI components, in canonical Windows order.
 struct Component { const char *name; const char *rated; };
 const Component kComponents[5] = {
-    { "Processor:",         "Calculations per second" },
-    { "Memory (RAM):",      "Memory operations per second" },
-    { "Graphics:",          "Desktop performance for Linux Aero" },
-    { "Gaming graphics:",   "3D business and gaming graphics performance" },
-    { "Primary hard disk:", "Disk data transfer rate" },
+    { "处理器：",         "每秒计算次数" },
+    { "内存 (RAM)：",      "每秒内存操作次数" },
+    { "图形：",          "Linux Aero 桌面性能" },
+    { "游戏图形：",   "3D 商务和游戏图形性能" },
+    { "主硬盘：", "磁盘数据传输速率" },
 };
 
 QString fmt1(double v) { return QLocale::c().toString(v, 'f', 1); }
@@ -61,7 +61,7 @@ PerformancePage::PerformancePage(QScrollArea *sidebar, QWidget *parent)
         "QLabel:hover { color: #0033AA; }");
 
     // Title + subtitle
-    v->addWidget(Win7::pageTitle("Rate and improve your computer's performance",
+    v->addWidget(Win7::pageTitle("评估并改善计算机的性能",
                                  13, "#1A5DAB"));
     v->addSpacing(12);
 
@@ -84,7 +84,7 @@ PerformancePage::PerformancePage(QScrollArea *sidebar, QWidget *parent)
     bannerText->setStyleSheet("color: #000000; background: transparent;");
     bn->addWidget(bannerText, 0, Qt::AlignVCenter);
     bn->addStretch(1);
-    m_rateBtn = new QPushButton("Rate this computer");
+    m_rateBtn = new QPushButton("评估此计算机");
     m_rateBtn->setIcon(themeIcon({ "security-high", "dialog-password",
                                    "preferences-system" }));
     m_rateBtn->setCursor(Qt::PointingHandCursor);
@@ -110,10 +110,10 @@ PerformancePage::PerformancePage(QScrollArea *sidebar, QWidget *parent)
         l->setAlignment(static_cast<Qt::Alignment>(align) | Qt::AlignVCenter);
         return l;
     };
-    table->addWidget(headerCell("Component",     Qt::AlignLeft),  0, 0);
-    table->addWidget(headerCell("What is rated", Qt::AlignLeft),  0, 1);
-    m_subHeader  = headerCell("Subscore",   Qt::AlignRight);
-    m_baseHeader = headerCell("Base score", Qt::AlignHCenter);
+    table->addWidget(headerCell("组件",     Qt::AlignLeft),  0, 0);
+    table->addWidget(headerCell("评估内容", Qt::AlignLeft),  0, 1);
+    m_subHeader  = headerCell("子分数",   Qt::AlignRight);
+    m_baseHeader = headerCell("基本分数", Qt::AlignHCenter);
     table->addWidget(m_subHeader,  0, 2);
     table->addWidget(m_baseHeader, 0, 3);
 
@@ -144,7 +144,7 @@ PerformancePage::PerformancePage(QScrollArea *sidebar, QWidget *parent)
         rated->setStyleSheet("color: #000000; background: transparent;");
         table->addWidget(rated, row, 1, Qt::AlignVCenter);
 
-        auto *sub = new QLabel("(unrated)");
+        auto *sub = new QLabel("(未评估)");
         QFont sf = sub->font(); sf.setPointSize(9); sub->setFont(sf);
         sub->setStyleSheet("color: #555555; background: transparent;");
         sub->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -185,7 +185,7 @@ PerformancePage::PerformancePage(QScrollArea *sidebar, QWidget *parent)
     badgeLay->addWidget(m_baseBig);
     bp->addWidget(m_badge, 0, Qt::AlignHCenter);
 
-    m_baseCaption = new QLabel("Determined by\nlowest subscore");
+    m_baseCaption = new QLabel("由最低子分数\n决定");
     { QFont f = m_baseCaption->font(); f.setPointSize(8); m_baseCaption->setFont(f); }
     m_baseCaption->setStyleSheet("color: #1A1A1A; background: transparent; border: none;");
     m_baseCaption->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
@@ -229,8 +229,8 @@ PerformancePage::PerformancePage(QScrollArea *sidebar, QWidget *parent)
     auto *helpCol = new QVBoxLayout;
     helpCol->setContentsMargins(0, 0, 0, 0);
     helpCol->setSpacing(8);
-    helpCol->addWidget(helpItem("What do these numbers mean?"));
-    helpCol->addWidget(helpItem("Tips for improving your computer's performance."));
+    helpCol->addWidget(helpItem("这些数字意味着什么？"));
+    helpCol->addWidget(helpItem("改善计算机性能的提示。"));
     helpRow->addLayout(helpCol, 1);
 
     // "View and print detailed…" with a printer icon (toggles raw metrics).
@@ -246,7 +246,7 @@ PerformancePage::PerformancePage(QScrollArea *sidebar, QWidget *parent)
     printerIc->setStyleSheet("background: transparent;");
     vph->addWidget(printerIc, 0, Qt::AlignTop);
     m_detailToggle = new QLabel(
-        "View and print detailed performance and\nsystem information");
+        "查看并打印详细的性能和\n系统信息");
     { QFont f = m_detailToggle->font(); f.setPointSize(9); m_detailToggle->setFont(f); }
     m_detailToggle->setStyleSheet(linkStyle);
     m_detailToggle->setCursor(Qt::PointingHandCursor);
@@ -287,7 +287,7 @@ PerformancePage::PerformancePage(QScrollArea *sidebar, QWidget *parent)
                                    "emblem-web", "text-html" }).pixmap(32, 32));
     learnIc->setStyleSheet("background: transparent;");
     lh->addWidget(learnIc, 0, Qt::AlignVCenter);
-    auto *learnLink = new QLabel("Learn more about scores and software\nonline");
+    auto *learnLink = new QLabel("联机了解有关分数和软件的\n详细信息");
     { QFont f = learnLink->font(); f.setPointSize(9); learnLink->setFont(f); }
     learnLink->setStyleSheet(linkStyle);
     learnLink->setCursor(Qt::PointingHandCursor);
@@ -312,7 +312,7 @@ PerformancePage::PerformancePage(QScrollArea *sidebar, QWidget *parent)
                                    "system-run" }).pixmap(16, 16));
     rerunIc->setStyleSheet("background: transparent;");
     bottomRow->addWidget(rerunIc, 0, Qt::AlignVCenter);
-    m_rerunLink = new QLabel("Re-run the assessment");
+    m_rerunLink = new QLabel("重新运行评估");
     { QFont f = m_rerunLink->font(); f.setPointSize(9); m_rerunLink->setFont(f); }
     m_rerunLink->setStyleSheet(linkStyle);
     m_rerunLink->setCursor(Qt::PointingHandCursor);
@@ -327,7 +327,7 @@ PerformancePage::PerformancePage(QScrollArea *sidebar, QWidget *parent)
         [this](int pct, const QString &phase) {
             if (!m_dlg) return;
             if (m_dlgBar)   m_dlgBar->setValue(pct);
-            if (m_dlgTitle) m_dlgTitle->setText(phase);
+            if (m_dlgTitle) m_dlgTitle->setText(Branding::brand(phase));
         });
     connect(m_bench, &WeiBenchmark::finished, this,
         [this](const WeiResult &r) {
@@ -379,7 +379,7 @@ void PerformancePage::applyState(bool rated)
     if (!rated) {
         m_detailWrap->hide();
         for (auto *s : m_subscore) {
-            s->setText("(unrated)");
+            s->setText("(未评估)");
             QFont f = s->font(); f.setPointSize(9); f.setBold(false); s->setFont(f);
             s->setStyleSheet("color: #555555; background: transparent;");
         }
@@ -391,7 +391,7 @@ void PerformancePage::populate(const WeiResult &r)
 {
     auto setSub = [&](int i, double score) {
         if (score <= 0.0) {
-            m_subscore[i]->setText("(unrated)");
+            m_subscore[i]->setText("(未评估)");
             QFont f = m_subscore[i]->font(); f.setPointSize(9); f.setBold(false);
             m_subscore[i]->setFont(f);
             m_subscore[i]->setStyleSheet("color: #555555; background: transparent;");
@@ -413,7 +413,7 @@ void PerformancePage::populate(const WeiResult &r)
     const QString when = r.assessedAt.isValid()
         ? r.assessedAt.toString("yyyy-MM-dd HH:mm:ss") : "-";
     m_scoresCurrent->setText(
-        QStringLiteral("Your scores are current\nLast update: %1").arg(when));
+        QStringLiteral("你的分数是最新的\n上次更新：%1").arg(when));
 
     m_detailLabel->setText(Branding::brand(QString(
         "Linux Experience Index - raw measured metrics\n"
@@ -461,7 +461,7 @@ void PerformancePage::onRateClicked()
     auto *hl = new QVBoxLayout(header);
     hl->setContentsMargins(16, 11, 16, 11);
     hl->setSpacing(0);
-    m_dlgTitle = new QLabel("Assessing system performance");
+    m_dlgTitle = new QLabel("正在评估系统性能");
     { QFont f = m_dlgTitle->font(); f.setPointSize(10); f.setBold(true);
       m_dlgTitle->setFont(f); }
     m_dlgTitle->setStyleSheet("color: #1A1A1A; background: transparent;");
@@ -476,8 +476,7 @@ void PerformancePage::onRateClicked()
     bl->setSpacing(10);
 
     auto *note = new QLabel(
-        "This might take a few minutes. Your screen might flash during the "
-        "rating.");
+        "这可能需要几分钟。评估期间屏幕可能会闪烁。");
     { QFont f = note->font(); f.setPointSize(9); note->setFont(f); }
     note->setWordWrap(true);
     note->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -501,7 +500,7 @@ void PerformancePage::onRateClicked()
     footH->setContentsMargins(12, 8, 12, 8);
     footH->setSpacing(8);
     footH->addStretch(1);
-    auto *cancel = new QPushButton("Cancel");
+    auto *cancel = new QPushButton("取消");
     cancel->setMinimumWidth(75);
     cancel->setCursor(Qt::PointingHandCursor);
     footH->addWidget(cancel);

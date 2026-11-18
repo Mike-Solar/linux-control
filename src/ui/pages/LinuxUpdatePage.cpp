@@ -209,7 +209,7 @@ LinuxUpdatePage::LinuxUpdatePage(QScrollArea *sidebar, QWidget *parent)
     btnRow->setSpacing(0);
     btnRow->addStretch(1);
 
-    m_installBtn = new QPushButton("Install updates");
+    m_installBtn = new QPushButton("安装更新");
     m_installBtn->setStyleSheet("QPushButton { padding-left: 12px; padding-right: 12px; }");
     connect(m_installBtn, &QPushButton::clicked, this, &LinuxUpdatePage::installUpdates);
     btnRow->addWidget(m_installBtn);
@@ -253,11 +253,11 @@ LinuxUpdatePage::LinuxUpdatePage(QScrollArea *sidebar, QWidget *parent)
         if (out) *out = right;
     };
 
-    makeInfoRow("Most recent check for updates:", &m_lastCheckVal);
-    makeInfoRow("Updates were installed:", &m_lastInstallVal);
+    makeInfoRow("最近检查更新的时间：", &m_lastCheckVal);
+    makeInfoRow("已安装的更新：", &m_lastInstallVal);
 
     QLabel *recvRight = nullptr;
-    makeInfoRow("You receive updates:", &recvRight);
+    makeInfoRow("你接收更新的方式：", &recvRight);
     recvRight->setText(
         Branding::brand("For Linux and other products from pacman and the AUR"));
 
@@ -272,8 +272,7 @@ LinuxUpdatePage::LinuxUpdatePage(QScrollArea *sidebar, QWidget *parent)
         auto *h = new QHBoxLayout(fossBox);
         h->setContentsMargins(8, 10, 8, 10);
         auto *lbl = new QLabel(
-            "Find out more about free software from the AUR.  "
-            "<a href='#' style='color:#1F4E99;'>Click here for details.</a>");
+            "从 AUR 了解更多关于自由软件的信息。  <a href='#' style='color:#1F4E99;'>单击此处查看详细信息。</a>");
         lbl->setTextFormat(Qt::RichText);
         lbl->setStyleSheet("border: none; background: transparent;");
         {
@@ -347,8 +346,8 @@ void LinuxUpdatePage::setIdleState()
     applyStatusBorder("#D4A800");
     resetStatusWidgets();
     m_iconLabel->setPixmap(themeIcon({"security-medium", "view-refresh"}).pixmap(48, 48));
-    m_titleLabel->setText("There may be updates available");
-    m_subLabel->setText("Click “Check for updates” in the sidebar to search for available updates.");
+    m_titleLabel->setText("可能有可用的更新");
+    m_subLabel->setText("单击侧边栏中的“检查更新”以搜索可用更新。");
 }
 
 void LinuxUpdatePage::setCheckingState()
@@ -356,7 +355,7 @@ void LinuxUpdatePage::setCheckingState()
     applyStatusBorder("");
     resetStatusWidgets();
     m_iconLabel->setPixmap(themeIcon({"system-software-update"}).pixmap(48, 48));
-    m_titleLabel->setText("Checking for updates...");
+    m_titleLabel->setText("正在检查更新...");
     m_subRowWidget->setMaximumHeight(0);
     m_subRowWidget->hide();
     m_progressBar->setRange(0, 0);
@@ -369,7 +368,7 @@ void LinuxUpdatePage::setNoUpdatesState()
     resetStatusWidgets();
     m_iconLabel->setPixmap(themeIcon({"security-high", "emblem-default", "dialog-ok-apply"}).pixmap(48, 48));
     m_titleLabel->setText(Branding::brand("Linux is up to date"));
-    m_subLabel->setText("There are no available updates for your computer.");
+    m_subLabel->setText("你的计算机没有可用的更新。");
 }
 
 void LinuxUpdatePage::setUpdatesAvailableState()
@@ -380,13 +379,13 @@ void LinuxUpdatePage::setUpdatesAvailableState()
 
     int nImp = 0, nOpt = 0;
     for (const auto &p : m_pkgs) { if (p.aur) nOpt++; else nImp++; }
-    m_titleLabel->setText("Install updates for your computer");
+    m_titleLabel->setText("为你的计算机安装更新");
 
     // Subtitle: important and optional updates as separate hyperlinks on their
     // own lines. Each link opens the select-updates page.
     if (nImp > 0) {
         setLinkLabel(m_subLabel,
-                     QString("%1 important update%2 available")
+                     QString("有 %1 个重要更新可用")
                          .arg(nImp).arg(nImp == 1 ? " is" : "s are"),
                      false);
         m_subLabel->show();
@@ -395,16 +394,16 @@ void LinuxUpdatePage::setUpdatesAvailableState()
     }
     if (nOpt > 0) {
         setLinkLabel(m_subLabel2,
-                     QString("%1 optional update%2 available")
+                     QString("有 %1 个可选更新可用")
                          .arg(nOpt).arg(nOpt == 1 ? " is" : "s are"),
                      false);
         m_subLabel2->show();
     }
 
     QStringList parts;
-    if (nImp > 0) parts << QString("%1 important update%2").arg(nImp).arg(nImp == 1 ? "" : "s");
-    if (nOpt > 0) parts << QString("%1 optional update%2").arg(nOpt).arg(nOpt == 1 ? "" : "s");
-    m_selectedLabel->setText(parts.join(", ") + " selected");
+    if (nImp > 0) parts << QString("%1 个重要更新").arg(nImp).arg(nImp == 1 ? "" : "s");
+    if (nOpt > 0) parts << QString("%1 个可选更新").arg(nOpt).arg(nOpt == 1 ? "" : "s");
+    m_selectedLabel->setText(parts.join("、") + "，已选择");
     m_selectedLabel->show();
     m_subSep->show();
     m_rightWidget->show();
@@ -427,10 +426,10 @@ void LinuxUpdatePage::setDownloadingState()
     applyStatusBorder("");
     resetStatusWidgets();
     m_iconLabel->setPixmap(themeIcon({"system-software-update", "view-refresh"}).pixmap(48, 48));
-    m_titleLabel->setText("Downloading updates...");
+    m_titleLabel->setText("正在下载更新...");
     // Package sizes are not reliably available, so progress is reported as the
     // share of selected updates whose download has started, not as a byte total.
-    m_subLabel->setText(QString("Downloading %1 update%2 (0% complete)")
+    m_subLabel->setText(QString("正在下载 %1 个更新 (0% 完成)")
         .arg(m_selectedCount).arg(m_selectedCount == 1 ? "" : "s"));
     m_progressBar->setRange(0, 0);
     m_progressBar->show();
@@ -438,8 +437,8 @@ void LinuxUpdatePage::setDownloadingState()
 
 void LinuxUpdatePage::setInstallingPhaseState()
 {
-    m_titleLabel->setText("Installing updates...");
-    m_subLabel->setText("Installing updates...");
+    m_titleLabel->setText("正在安装更新...");
+    m_subLabel->setText("正在安装更新...");
     m_progressBar->setRange(0, 0);
 }
 
@@ -451,8 +450,8 @@ void LinuxUpdatePage::setDoneState(bool ok)
         ? themeIcon({"security-high", "dialog-ok-apply"}).pixmap(48, 48)
         : themeIcon({"dialog-error", "security-low"}).pixmap(48, 48));
     m_titleLabel->setText(ok
-        ? "The updates were installed successfully."
-        : "Some updates failed to install.");
+        ? "更新已成功安装。"
+        : "某些更新安装失败。");
     if (ok) {
         // Anything that was available but not part of this selection is still
         // outstanding -- count both repo and AUR updates, not just optional ones.
@@ -460,11 +459,11 @@ void LinuxUpdatePage::setDoneState(bool ok)
         for (const auto &p : m_pkgs)
             if (!m_selectedPkgNames.contains(p.name)) remaining++;
         if (remaining > 0)
-            m_subLabel->setText("There are still updates available for your computer.");
+            m_subLabel->setText("你的计算机仍有可用的更新。");
         else
-            m_subLabel->setText("Your system is up to date.");
+            m_subLabel->setText("系统已是最新。");
     } else {
-        m_subLabel->setText("Check your internet connection and try again, or run pacman -Syu in a terminal.");
+        m_subLabel->setText("请检查 Internet 连接并重试，或在终端中运行 pacman -Syu。");
     }
 }
 
@@ -473,14 +472,14 @@ void LinuxUpdatePage::setDoneState(bool ok)
 QString LinuxUpdatePage::formatStamp(const QDateTime &dt)
 {
     if (!dt.isValid())
-        return "Never";
+        return "从未";
     const QLocale loc = QLocale::system();
     const QString time = loc.toString(dt.time(), QLocale::ShortFormat);
     if (dt.date() == QDate::currentDate())
-        return QString("Today at %1").arg(time);
+        return QString("今天 %1").arg(time);
     if (dt.date() == QDate::currentDate().addDays(-1))
-        return QString("Yesterday at %1").arg(time);
-    return QString("%1 at %2").arg(loc.toString(dt.date(), QLocale::ShortFormat), time);
+        return QString("昨天 %1").arg(time);
+    return QString("%1 %2").arg(loc.toString(dt.date(), QLocale::ShortFormat), time);
 }
 
 void LinuxUpdatePage::updateInfoRows()
@@ -488,12 +487,12 @@ void LinuxUpdatePage::updateInfoRows()
     m_lastCheckVal->setText(formatStamp(m_lastCheck));
 
     if (m_everInstalled) {
-        QString suffix = m_lastInstallOk ? "" : " (Failed).";
+        QString suffix = m_lastInstallOk ? "" : "（失败）。";
         m_lastInstallVal->setText(
-            QString("%1%2  <a href='#' style='color:#1F4E99;'>View update history</a>")
+            QString("%1%2  <a href='#' style='color:#1F4E99;'>查看更新历史记录</a>")
             .arg(formatStamp(m_lastInstall), suffix));
     } else {
-        m_lastInstallVal->setText("Never");
+        m_lastInstallVal->setText("从未");
     }
 
     // Persist whenever the displayed stamps change so they survive navigating
@@ -601,7 +600,7 @@ QWidget *LinuxUpdatePage::buildSelectView()
     headerBar->setStyleSheet("#luSelectHeader { background: #FFFFFF; }");
     auto *hh = new QHBoxLayout(headerBar);
     hh->setContentsMargins(28, 18, 28, 12);
-    auto *hdr = new QLabel("Select the updates you want to install");
+    auto *hdr = new QLabel("选择要安装的更新");
     {
         QFont f = hdr->font();
         f.setPointSize(12);
@@ -643,8 +642,8 @@ QWidget *LinuxUpdatePage::buildSelectView()
         b->setFont(f);
         return b;
     };
-    m_selImpItem = makeCat(QString("Important (%1)").arg(nImp));
-    m_selOptItem = makeCat(QString("Optional (%1)").arg(nOpt));
+    m_selImpItem = makeCat(QString("重要 (%1)").arg(nImp));
+    m_selOptItem = makeCat(QString("可选 (%1)").arg(nOpt));
     connect(m_selImpItem, &QPushButton::clicked, this, [this]() { setSelectFilter(0); });
     connect(m_selOptItem, &QPushButton::clicked, this, [this]() { setSelectFilter(1); });
     catV->addWidget(m_selImpItem);
@@ -657,7 +656,7 @@ QWidget *LinuxUpdatePage::buildSelectView()
     // auto-tristate checkbox drives the whole group (no manual master logic).
     m_selTree = new QTreeWidget;
     m_selTree->setColumnCount(2);
-    m_selTree->setHeaderLabels({ "Name", "Size" });
+    m_selTree->setHeaderLabels({ "名称", "大小" });
     Win7::configureListTree(m_selTree);
     // Unlike the flat ribbon lists, this tree keeps its expandable group node.
     m_selTree->setRootIsDecorated(true);
@@ -695,9 +694,7 @@ QWidget *LinuxUpdatePage::buildSelectView()
             if (!pkg) return;
             m_selDetailTitle->setText(pkg->name);
             m_selDetailBody->setText(
-                QString("<b>Update:</b> %1 → %2<br><br>"
-                        "For more information run:<br>"
-                        "<tt>pacman -Si %3</tt>")
+                QString("<b>更新：</b> %1 → %2<br><br>运行以下命令了解更多信息：<br><tt>pacman -Si %3</tt>")
                 .arg(pkg->oldVer, pkg->newVer, pkg->name));
             m_selDetailNote->show();
         });
@@ -725,7 +722,7 @@ QWidget *LinuxUpdatePage::buildSelectView()
     m_selDetailTitle->setStyleSheet("color: #000000; border: none;");
     detV->addWidget(m_selDetailTitle);
 
-    m_selDetailBody = new QLabel("Select a package from the list to see details.");
+    m_selDetailBody = new QLabel("从列表中选择包以查看详细信息。");
     {
         QFont f = m_selDetailBody->font();
         f.setPointSize(9);
@@ -737,7 +734,7 @@ QWidget *LinuxUpdatePage::buildSelectView()
     detV->addWidget(m_selDetailBody, 1);
 
     m_selDetailNote = new QLabel(
-        "\xe2\x9a\xa0 You may need to restart your computer after installing this update.");
+        "⚠ 安装此更新后你可能需要重新启动计算机。");
     {
         QFont f = m_selDetailNote->font();
         f.setPointSize(8);
@@ -773,8 +770,8 @@ QWidget *LinuxUpdatePage::buildSelectView()
     m_selCountLabel->setStyleSheet("color: #333333; border: none;");
     fh->addWidget(m_selCountLabel, 1);
 
-    auto *okBtn     = new QPushButton("OK");
-    auto *cancelBtn = new QPushButton("Cancel");
+    auto *okBtn     = new QPushButton("确定");
+    auto *cancelBtn = new QPushButton("取消");
     okBtn->setDefault(true);
     okBtn->setMinimumWidth(80);
     cancelBtn->setMinimumWidth(80);
@@ -866,9 +863,9 @@ void LinuxUpdatePage::updateSelectCount()
         if (p.aur) ++selOpt; else ++selImp;
     }
     QStringList fp;
-    if (selImp > 0) fp << QString("%1 important update%2").arg(selImp).arg(selImp == 1 ? "" : "s");
-    if (selOpt > 0) fp << QString("%1 optional update%2").arg(selOpt).arg(selOpt == 1 ? "" : "s");
-    m_selCountLabel->setText(fp.isEmpty() ? "Nothing selected" : "Total selected: " + fp.join(", "));
+    if (selImp > 0) fp << QString("%1 个重要更新").arg(selImp).arg(selImp == 1 ? "" : "s");
+    if (selOpt > 0) fp << QString("%1 个可选更新").arg(selOpt).arg(selOpt == 1 ? "" : "s");
+    m_selCountLabel->setText(fp.isEmpty() ? "未选择任何内容" : "已选择总数：" + fp.join(", "));
 }
 
 void LinuxUpdatePage::applySelection()
@@ -886,12 +883,12 @@ void LinuxUpdatePage::applySelection()
 
     if (m_selectedCount > 0) {
         QStringList parts;
-        if (selImp > 0) parts << QString("%1 important update%2").arg(selImp).arg(selImp == 1 ? "" : "s");
-        if (selOpt > 0) parts << QString("%1 optional update%2").arg(selOpt).arg(selOpt == 1 ? "" : "s");
-        m_selectedLabel->setText(parts.join(", ") + " selected");
+        if (selImp > 0) parts << QString("%1 个重要更新").arg(selImp).arg(selImp == 1 ? "" : "s");
+        if (selOpt > 0) parts << QString("%1 个可选更新").arg(selOpt).arg(selOpt == 1 ? "" : "s");
+        m_selectedLabel->setText(parts.join("、") + "，已选择");
         m_installBtn->setEnabled(true);
     } else {
-        m_selectedLabel->setText("No updates selected");
+        m_selectedLabel->setText("未选择更新");
         m_installBtn->setEnabled(false);
     }
 }
@@ -970,12 +967,12 @@ void LinuxUpdatePage::fetchPackageSizes()
 
         QString sizeStr;
         if (totalKiB > 0)
-            sizeStr = ", " + human(totalKiB);
+            sizeStr = "，大小 " + human(totalKiB);
 
         QStringList parts;
-        if (nImpSz > 0) parts << QString("%1 important update%2").arg(nImpSz).arg(nImpSz == 1 ? "" : "s");
-        if (nOptSz > 0) parts << QString("%1 optional update%2").arg(nOptSz).arg(nOptSz == 1 ? "" : "s");
-        m_selectedLabel->setText(parts.join(", ") + " selected" + sizeStr);
+        if (nImpSz > 0) parts << QString("%1 个重要更新").arg(nImpSz).arg(nImpSz == 1 ? "" : "s");
+        if (nOptSz > 0) parts << QString("%1 个可选更新").arg(nOptSz).arg(nOptSz == 1 ? "" : "s");
+        m_selectedLabel->setText(parts.join("、") + "，已选择" + sizeStr);
     });
 
     proc->start(sizeCmd, args);
@@ -1046,8 +1043,8 @@ void LinuxUpdatePage::runFallbackCheck()
             updateInfoRows();
             setNoUpdatesState();
             if (!errOut.isEmpty())
-                QMessageBox::warning(this, "Update check failed",
-                    QString("Could not synchronize the package database:\n\n%1")
+                QMessageBox::warning(this, "更新检查失败",
+                    QString("无法同步软件包数据库：\n\n%1")
                     .arg(errOut.toHtmlEscaped()));
             return;
         }
@@ -1224,7 +1221,7 @@ void LinuxUpdatePage::onInstallReadyRead()
             m_progressBar->setValue(cur);
             // Subtitle: count on the first line, the package currently being
             // installed on the second (m_subLabel2).
-            m_subLabel->setText(QString("Installing update %1 of %2...")
+            m_subLabel->setText(QString("正在安装更新 %1（共 %2 个）...")
                 .arg(cur).arg(m_selectedCount));
             m_subLabel2->setText(lastPkg.toHtmlEscaped());
             m_subLabel2->show();
@@ -1263,7 +1260,7 @@ void LinuxUpdatePage::onInstallReadyRead()
         const int pct = cur * 100 / m_selectedCount;
         m_progressBar->setRange(0, m_selectedCount);
         m_progressBar->setValue(cur);
-        m_subLabel->setText(QString("Downloading %1 update%2 (%3% complete)")
+        m_subLabel->setText(QString("正在下载 %1 个更新（已完成 %3%）")
             .arg(m_selectedCount).arg(m_selectedCount == 1 ? "" : "s").arg(pct));
     }
 }
@@ -1291,8 +1288,8 @@ void LinuxUpdatePage::onInstallFinished(int exitCode, QProcess::ExitStatus)
     setDoneState(m_lastInstallOk);
 
     if (!m_lastInstallOk && !errOut.isEmpty()) {
-        QMessageBox::warning(this, "Update failed",
-            QString("pacman reported an error:\n\n%1").arg(errOut.toHtmlEscaped()));
+        QMessageBox::warning(this, "更新失败",
+            QString("pacman 报告了一个错误：\n\n%1").arg(errOut.toHtmlEscaped()));
     }
 }
 
@@ -1324,8 +1321,8 @@ void LinuxUpdatePage::startYayInstall()
             // Show the tail of yay output so the user can diagnose the failure
             const QString tail = m_installBuf.length() > 2000
                 ? "..." + m_installBuf.right(2000) : m_installBuf;
-            QMessageBox::warning(this, "AUR update failed",
-                QString("yay reported an error:\n\n%1").arg(tail.toHtmlEscaped()));
+            QMessageBox::warning(this, "AUR 更新失败",
+                QString("yay 报告了一个错误：\n\n%1").arg(tail.toHtmlEscaped()));
         }
     });
     QStringList yayArgs = {"--noconfirm", "--sudo", "pkexec", "--cleanafter"};

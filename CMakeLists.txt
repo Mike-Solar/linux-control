@@ -44,6 +44,7 @@ add_executable(controlpanel
     src/data/WindowsTimeZones.cpp
     src/perf/WeiBenchmark.cpp
     src/data/Categories.cpp
+    src/data/UiText.cpp
     src/data/SystemAndSecurity.cpp
     src/data/NetworkAndInternet.cpp
     src/data/HardwareAndSound.cpp

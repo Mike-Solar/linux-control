@@ -1,6 +1,7 @@
 #include "ProgramsFeaturesPage.h"
 #include "IconHelper.h"
 #include "Win7Ui.h"
+#include "UiText.h"
 
 #include <QScrollArea>
 #include <QLabel>
@@ -549,11 +550,10 @@ ProgramsFeaturesPage::ProgramsFeaturesPage(QScrollArea *sidebar, QWidget *parent
     auto *headerV = new QVBoxLayout;
     headerV->setContentsMargins(28, 0, 28, 0);
     headerV->setSpacing(0);
-    headerV->addWidget(Win7::pageTitle("Uninstall or change a program"));
+    headerV->addWidget(Win7::pageTitle("卸载或更改程序"));
     headerV->addSpacing(8);
     headerV->addWidget(Win7::label(
-        "To uninstall a program, select it from the list and then click "
-        "Uninstall, Change, or Repair."));
+        "要卸载程序，请从列表中选择它，然后单击“卸载”、“更改”或“修复”。"));
     contentV->addLayout(headerV);
     contentV->addSpacing(12);
     contentV->addWidget(Win7::hSeparator());
@@ -561,7 +561,7 @@ ProgramsFeaturesPage::ProgramsFeaturesPage(QScrollArea *sidebar, QWidget *parent
     // "Organize" command bar
     QHBoxLayout *toolH = nullptr;
     auto *toolBar = Win7::commandBar(&toolH);
-    toolH->addWidget(Win7::dropdownLabel("Organize"));
+    toolH->addWidget(Win7::dropdownLabel("组织"));
     toolH->addStretch(1);
     Win7::addCommandBarIcons(toolH);
     contentV->addWidget(toolBar);
@@ -569,7 +569,7 @@ ProgramsFeaturesPage::ProgramsFeaturesPage(QScrollArea *sidebar, QWidget *parent
     // Programs tree
     m_tree = new QTreeWidget;
     m_tree->setColumnCount(5);
-    m_tree->setHeaderLabels({ "Name", "Publisher", "Installed On", "Size", "Version" });
+    m_tree->setHeaderLabels({ "名称", "发布者", "安装日期", "大小", "版本" });
     m_tree->setSortingEnabled(true);
     Win7::configureListTree(m_tree);
     for (int c = 0; c < 4; ++c)
@@ -600,12 +600,12 @@ ProgramsFeaturesPage::ProgramsFeaturesPage(QScrollArea *sidebar, QWidget *parent
     line1->setContentsMargins(0, 0, 0, 0);
     line1->setSpacing(40);
     m_totalLbl = Win7::label(QString(), 9, "#1F1F1F");
-    line1->addWidget(Win7::label("Currently installed programs", 9, "#1F1F1F"));
+    line1->addWidget(Win7::label("当前安装的程序", 9, "#1F1F1F"));
     line1->addWidget(m_totalLbl);
     line1->addStretch(1);
     statusText->addLayout(line1);
 
-    m_countLbl = Win7::label("0 programs installed", 9, "#555555");
+    m_countLbl = Win7::label("已安装 0 个程序", 9, "#555555");
     statusText->addWidget(m_countLbl);
 
     statusH->addLayout(statusText);
@@ -622,8 +622,8 @@ void ProgramsFeaturesPage::startLoad()
     // already on screen with the "Searching..." placeholder by then. This is
     // also called to refresh the list after a package is uninstalled.
     m_tree->clear();
-    Win7::addTreePlaceholder(m_tree, "Searching for installed programs...");
-    m_countLbl->setText("0 programs installed");
+    Win7::addTreePlaceholder(m_tree, "正在搜索已安装的程序...");
+    m_countLbl->setText("已安装 0 个程序");
     m_totalLbl->clear();
     m_tree->setCursor(Qt::BusyCursor);
 
@@ -654,7 +654,7 @@ void ProgramsFeaturesPage::populate(const QList<ProgramInfo> &programs)
         item->setIcon(0, icon);
         item->setText(0, p.display);
         item->setData(0, Qt::UserRole, p.name);   // package name for the action dialog
-        item->setText(1, p.publisher);
+        item->setText(1, UiText::localize(p.publisher));
         item->setText(2, p.installed.isValid()
                               ? p.installed.toString("yyyy-MM-dd") : QString());
         item->setText(3, humanSize(p.sizeBytes));
@@ -665,8 +665,8 @@ void ProgramsFeaturesPage::populate(const QList<ProgramInfo> &programs)
     }
     m_tree->sortByColumn(0, Qt::AscendingOrder);
 
-    m_totalLbl->setText("Total size:  " + humanSize(totalBytes));
-    m_countLbl->setText(QString("%1 program%2 installed")
+    m_totalLbl->setText("总大小： " + humanSize(totalBytes));
+    m_countLbl->setText(QString("已安装 %1 个程序")
                             .arg(programs.size())
                             .arg(programs.size() == 1 ? "" : "s"));
 }
@@ -683,7 +683,7 @@ void ProgramsFeaturesPage::onProgramActivated(QTreeWidgetItem *item, int /*colum
     // single-line question) above a slightly darker footer panel holding the
     // Uninstall / Reinstall / Cancel buttons at the bottom-right.
     QDialog dlg(this);
-    dlg.setWindowTitle("Programs and Features");
+    dlg.setWindowTitle("程序和功能");
     dlg.setModal(true);
     dlg.setStyleSheet("QDialog { background: #FFFFFF; }");
 
@@ -706,7 +706,7 @@ void ProgramsFeaturesPage::onProgramActivated(QTreeWidgetItem *item, int /*colum
     bodyH->addWidget(iconLbl, 0, Qt::AlignVCenter);
 
     auto *msg = new QLabel(
-        QString("Do you want to uninstall or repair %1?").arg(display));
+        QString("是否要卸载或修复 %1？").arg(display));
     {
         QFont f = msg->font();
         f.setPointSize(9);
@@ -726,9 +726,9 @@ void ProgramsFeaturesPage::onProgramActivated(QTreeWidgetItem *item, int /*colum
     footH->setContentsMargins(12, 8, 12, 8);
     footH->setSpacing(8);
     footH->addStretch(1);
-    auto *uninstallBtn = new QPushButton("Uninstall");
-    auto *reinstallBtn = new QPushButton("Repair");
-    auto *cancelBtn    = new QPushButton("Cancel");
+    auto *uninstallBtn = new QPushButton("卸载");
+    auto *reinstallBtn = new QPushButton("修复");
+    auto *cancelBtn    = new QPushButton("取消");
     for (QPushButton *b : { uninstallBtn, reinstallBtn, cancelBtn }) {
         b->setMinimumWidth(75);
         b->setAutoDefault(false);   // don't let the first button claim the default
@@ -781,9 +781,9 @@ void ProgramsFeaturesPage::runPackageAction(const QString &pkg, const QString &d
     }
 
     auto *progress = new QProgressDialog(
-        QString("%1 %2…").arg(reinstall ? "Repairing" : "Uninstalling", display),
+        QString("%1 %2…").arg(reinstall ? "正在修复" : "正在卸载", display),
         QString(), 0, 0, this);               // empty cancel label -> busy, no cancel
-    progress->setWindowTitle(reinstall ? "Repair" : "Uninstall");
+    progress->setWindowTitle(reinstall ? "修复" : "卸载");
     progress->setWindowModality(Qt::WindowModal);
     progress->setMinimumDuration(0);
     progress->setValue(0);
@@ -799,16 +799,16 @@ void ProgramsFeaturesPage::runPackageAction(const QString &pkg, const QString &d
 
         if (status == QProcess::NormalExit && code == 0) {
             QMessageBox::information(this,
-                reinstall ? "Repair complete" : "Uninstall complete",
-                QString("%1 was %2.")
-                    .arg(display, reinstall ? "reinstalled" : "uninstalled"));
+                reinstall ? "修复完成" : "卸载完成",
+                QString("%1 已%2。")
+                    .arg(display, reinstall ? "重新安装" : "卸载"));
             if (!reinstall) startLoad();       // it's gone now, refresh the list
         } else {
             const QString tail = out.length() > 1500 ? "…" + out.right(1500) : out;
             QMessageBox::warning(this,
-                reinstall ? "Repair failed" : "Uninstall failed",
-                tail.isEmpty() ? QString("The operation did not complete.")
-                               : QString("The operation did not complete:\n\n%1").arg(tail));
+                reinstall ? "修复失败" : "卸载失败",
+                tail.isEmpty() ? QString("操作未完成。")
+                               : QString("操作未完成：\n\n%1").arg(tail));
         }
     });
     connect(proc, &QProcess::errorOccurred, this,
@@ -817,8 +817,8 @@ void ProgramsFeaturesPage::runPackageAction(const QString &pkg, const QString &d
         progress->close();
         progress->deleteLater();
         proc->deleteLater();
-        QMessageBox::warning(this, "Action failed",
-            "Could not launch the package manager.");
+        QMessageBox::warning(this, "操作失败",
+            "无法启动包管理器。");
     });
 
     proc->start(program, args);

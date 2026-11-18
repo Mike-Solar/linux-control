@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Title the main window explicitly rather than via applicationDisplayName,
     // which Qt would otherwise append to every dialog title ("Foo - Control
     // Panel"). With no display name set, dialogs show just their own title.
-    setWindowTitle("Control Panel");
+    setWindowTitle("控制面板");
     setMinimumSize(700, 520);
     resize(1000, 650);
 
@@ -143,7 +143,7 @@ void MainWindow::buildCrumbBar()
     // own border/background or it overrides that border-image. On focus we swap
     // to a solid white field (AeroQt has no focus-state glass image).
     m_searchBox = new QLineEdit;
-    m_searchBox->setPlaceholderText("Search Control Panel");
+    m_searchBox->setPlaceholderText("搜索控制面板");
     m_searchBox->setFixedWidth(190);
     m_searchBox->setFixedHeight(24);
     m_searchBox->setClearButtonEnabled(false);
@@ -197,7 +197,7 @@ void MainWindow::setCrumbTrail(const QStringList &trail)
     addArrow();
 
     // "Control Panel" is always a link back to the home view.
-    m_homeCrumb = new QLabel("Control Panel");
+    m_homeCrumb = new QLabel("控制面板");
     m_homeCrumb->setObjectName("crumbHome");
     m_homeCrumb->setCursor(Qt::PointingHandCursor);
     m_homeCrumb->setStyleSheet(
@@ -316,8 +316,8 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
                 // If the target program isn't on PATH, tell the user it's not
                 // installed rather than failing silently.
                 if (QStandardPaths::findExecutable(program).isEmpty()) {
-                    QMessageBox::warning(this, tr("Control Panel"),
-                        tr("\"%1\" is not installed.").arg(program));
+                    QMessageBox::warning(this, tr("控制面板"),
+                        tr("未安装“%1”。").arg(program));
                 } else {
                     QProcess::startDetached(program, cmd);
                 }
@@ -654,7 +654,7 @@ QWidget *MainWindow::buildHomePage()
     auto *headRow = new QHBoxLayout;
     headRow->setContentsMargins(0, 0, 0, 22);
 
-    auto *settingsLabel = new QLabel("Adjust your computer's settings");
+    auto *settingsLabel = new QLabel("调整计算机的设置");
     QFont f = settingsLabel->font();
     f.setPointSize(12);
     settingsLabel->setFont(f);
@@ -662,17 +662,17 @@ QWidget *MainWindow::buildHomePage()
     headRow->addWidget(settingsLabel);
     headRow->addStretch();
 
-    auto *viewByLabel = new QLabel("View by:");
+    auto *viewByLabel = new QLabel("查看方式：");
     viewByLabel->setStyleSheet("color: #333333; font-size: 9pt;");
     headRow->addWidget(viewByLabel);
 
     // The Win7 "View by:" dropdown: blue text ending in the shared Aero arrow,
     // orange on hover, opening its menu on click.
-    auto *categoryBtn = new Win7::MenuButton("Category");
+    auto *categoryBtn = new Win7::MenuButton("类别");
     auto *viewMenu = new QMenu(categoryBtn);
-    viewMenu->addAction("Category");
-    viewMenu->addAction("Large icons");
-    viewMenu->addAction("Small icons");
+    viewMenu->addAction("类别");
+    viewMenu->addAction("大图标");
+    viewMenu->addAction("小图标");
     categoryBtn->setMenu(viewMenu);
     headRow->addWidget(categoryBtn);
 
@@ -760,7 +760,7 @@ MainWindow::Sidebar MainWindow::buildSidebarShell(int initialWidth)
     navV->setSpacing(0);
     outerV->addWidget(textWrap);
 
-    auto *controlHome = new QPushButton("Control Panel Home");
+    auto *controlHome = new QPushButton("控制面板主页");
     controlHome->setCursor(Qt::PointingHandCursor);
     controlHome->setFlat(true);
     controlHome->setStyleSheet(
@@ -792,7 +792,7 @@ QScrollArea *MainWindow::buildNavSidebar(const QString &currentCategory)
             auto *bullet = new QLabel("•");
             bullet->setStyleSheet("color: #000000; font-size: 9pt; background: transparent;");
             row->addWidget(bullet, 0, Qt::AlignTop);
-            auto *label = new QLabel(cat);
+            auto *label = new QLabel(Branding::brand(cat));
             QFont bf = label->font();
             bf.setPointSize(9);
             bf.setBold(true);
@@ -802,7 +802,7 @@ QScrollArea *MainWindow::buildNavSidebar(const QString &currentCategory)
             row->addWidget(label, 1);
             bar.navV->addLayout(row);
         } else {
-            auto *link = new QLabel(cat);
+            auto *link = new QLabel(Branding::brand(cat));
             QFont lf = link->font();
             lf.setPointSize(9);
             link->setFont(lf);
@@ -891,7 +891,7 @@ QScrollArea *MainWindow::buildSubpageSidebar(const QList<SidebarLink> &links,
         bar.navV->addWidget(sep);
         bar.navV->addSpacing(4);
 
-        auto *seeAlsoLabel = new QLabel("See also");
+        auto *seeAlsoLabel = new QLabel("另请参阅");
         QFont f = seeAlsoLabel->font();
         f.setPointSize(8);
         seeAlsoLabel->setFont(f);

@@ -68,7 +68,7 @@ EaseOfAccessPage::EaseOfAccessPage(QScrollArea *sidebar, QWidget *parent)
                                         /*fixedWidth=*/700);
 
     // Page title.
-    contentV->addWidget(Win7::pageTitle("Make your computer easier to use"));
+    contentV->addWidget(Win7::pageTitle("使计算机更易于使用"));
     contentV->addSpacing(16);
 
     auto addHeading = [&](const QString &text) {
@@ -78,10 +78,10 @@ EaseOfAccessPage::EaseOfAccessPage(QScrollArea *sidebar, QWidget *parent)
     };
 
     // Quick access to common tools
-    addHeading("Quick access to common tools");
+    addHeading("常用工具的快速访问");
 
     auto *intro = Win7::label(
-        "You can use the tools in this section to help you get started.",
+        "你可以使用此部分中的工具来帮助你入门。",
         9, "#333333");
     intro->setWordWrap(true);
     contentV->addWidget(intro);
@@ -115,12 +115,12 @@ EaseOfAccessPage::EaseOfAccessPage(QScrollArea *sidebar, QWidget *parent)
         return tile;
     };
 
-    grid->addLayout(makeTile("zoom-in", "Start Magnifier", kMagnifier), 0, 0);
+    grid->addLayout(makeTile("zoom-in", "启动放大镜", kMagnifier), 0, 0);
     grid->addLayout(makeTile("preferences-desktop-keyboard",
-                             "Start On-Screen Keyboard", kAccess), 0, 1);
-    grid->addLayout(makeTile("audio-volume-high", "Start Narrator", kAccess), 1, 0);
+                             "启动屏幕键盘", kAccess), 0, 1);
+    grid->addLayout(makeTile("audio-volume-high", "启动讲述人", kAccess), 1, 0);
     grid->addLayout(makeTile("preferences-desktop-theme",
-                             "Set up High Contrast", kHighContrast), 1, 1);
+                             "设置高对比度", kHighContrast), 1, 1);
     grid->setColumnStretch(0, 1);
     grid->setColumnStretch(1, 1);
 
@@ -128,11 +128,10 @@ EaseOfAccessPage::EaseOfAccessPage(QScrollArea *sidebar, QWidget *parent)
     contentV->addSpacing(20);
 
     // Explore all settings
-    addHeading("Explore all settings");
+    addHeading("浏览所有设置");
 
     auto *explore = Win7::label(
-        "When you select these settings, they will automatically start each time "
-        "you sign in.", 9, "#333333");
+        "选择这些设置后，它们将在你每次登录时自动启动。", 9, "#333333");
     explore->setWordWrap(true);
     contentV->addWidget(explore);
     contentV->addSpacing(12);
@@ -142,19 +141,19 @@ EaseOfAccessPage::EaseOfAccessPage(QScrollArea *sidebar, QWidget *parent)
     list->setSpacing(0);
 
     addSettingLink(list, "preferences-desktop-accessibility",
-                   "Use the computer without a display", kAccess);
+                   "不使用显示器使用计算机", kAccess);
     addSettingLink(list, "zoom-in",
-                   "Make the computer easier to see", kMagnifier);
+                   "使计算机更易于查看", kMagnifier);
     addSettingLink(list, "input-mouse",
-                   "Use the computer without a mouse or keyboard", kAccess);
+                   "不使用鼠标或键盘使用计算机", kAccess);
     addSettingLink(list, "input-mouse",
-                   "Make the mouse easier to use", kMouse);
+                   "使鼠标更易于使用", kMouse);
     addSettingLink(list, "input-keyboard",
-                   "Make the keyboard easier to use", kAccess);
+                   "使键盘更易于使用", kAccess);
     addSettingLink(list, "audio-volume-high",
-                   "Use text or visual alternatives for sounds", kAccess);
+                   "使用文本或视觉替代声音", kAccess);
     addSettingLink(list, "preferences-desktop-cursors",
-                   "Change the size of mouse pointers", kCursorTheme);
+                   "更改鼠标指针的大小", kCursorTheme);
 
     contentV->addLayout(list);
     contentV->addStretch(1);

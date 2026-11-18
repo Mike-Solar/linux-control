@@ -14,7 +14,7 @@
 LinverConfigDialog::LinverConfigDialog(const QString &distroName, QWidget *parent)
     : QDialog(parent)
 {
-    setWindowTitle(QStringLiteral("Control Panel Settings"));
+    setWindowTitle(QStringLiteral("控制面板设置"));
     setWindowIcon(Branding::windowsLogo());
     setModal(true);
 
@@ -25,7 +25,7 @@ LinverConfigDialog::LinverConfigDialog(const QString &distroName, QWidget *paren
     // ---- Branding style row ----------------------------------------------
     auto *styleRow = new QHBoxLayout;
     styleRow->setSpacing(10);
-    styleRow->addWidget(new QLabel(QStringLiteral("Branding style to use:")));
+    styleRow->addWidget(new QLabel(QStringLiteral("使用的品牌样式：")));
 
     m_styleCombo = new QComboBox;
     // Index order mirrors Branding::Style: 0 = distro, 1 = Windows 7.
@@ -42,8 +42,7 @@ LinverConfigDialog::LinverConfigDialog(const QString &distroName, QWidget *paren
     // separate "fake version" toggle is needed. This switch renames every
     // "Linux X" feature mention to "Windows X" and is independent of the style.
     m_windowsNames = new QCheckBox(
-        QStringLiteral("Use Windows names for system features "
-                       "(Update, Firewall, and so on)"));
+        QStringLiteral("使用 Windows 名称表示系统功能（更新、防火墙等）"));
     m_windowsNames->setChecked(Branding::useWindowsNames());
     root->addWidget(m_windowsNames);
 
@@ -51,11 +50,10 @@ LinverConfigDialog::LinverConfigDialog(const QString &distroName, QWidget *paren
     auto *custRow = new QHBoxLayout;
     custRow->setSpacing(10);
     auto *hint = new QLabel(
-        QStringLiteral("To customize texts, branding image and\n"
-                       "other options, click customize."));
+        QStringLiteral("要自定义文本、品牌图像和其他选项，请单击“自定义”。"));
     custRow->addWidget(hint, 1);
 
-    auto *customize = new QPushButton(QStringLiteral("Customize..."));
+    auto *customize = new QPushButton(QStringLiteral("自定义..."));
     customize->setEnabled(false);   // reserved for a future customization panel
     custRow->addWidget(customize, 0, Qt::AlignBottom);
     root->addLayout(custRow);

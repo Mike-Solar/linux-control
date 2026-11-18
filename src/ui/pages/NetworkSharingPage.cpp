@@ -67,10 +67,10 @@ NetworkSharingPage::NetInfo NetworkSharingPage::gatherInfo()
                          .exists();
 
     n.accessType     = n.connected ? QStringLiteral("Internet")
-                                    : QStringLiteral("No network access");
-    n.connectionName = n.wireless ? QStringLiteral("Wireless Network Connection")
-                                   : QStringLiteral("Local Area Connection");
-    n.networkName    = QStringLiteral("Network");
+                                    : QStringLiteral("无网络访问");
+    n.connectionName = n.wireless ? QStringLiteral("无线网络连接")
+                                   : QStringLiteral("本地连接");
+    n.networkName    = QStringLiteral("网络");
 
     return n;
 }
@@ -209,7 +209,7 @@ NetworkSharingPage::NetworkSharingPage(QScrollArea *sidebar, QWidget *parent)
 
     // Page title
     contentV->addWidget(Win7::pageTitle(
-        "View your basic network information and set up connections"));
+        "查看基本网络信息并设置连接"));
     contentV->addSpacing(16);
 
     // Network map: This computer, Network, Internet
@@ -219,7 +219,7 @@ NetworkSharingPage::NetworkSharingPage(QScrollArea *sidebar, QWidget *parent)
 
     auto *computerNode = buildMapNode({"computer", "video-display",
                                        "preferences-system"},
-                                      info.computerName, "(This computer)");
+                                      info.computerName, "(此计算机)");
     auto *networkNode  = buildMapNode({"network-type-public", "network-workgroup",
                                        "preferences-system-network",
                                        "network-wired"},
@@ -249,7 +249,7 @@ NetworkSharingPage::NetworkSharingPage(QScrollArea *sidebar, QWidget *parent)
     mapRow->addStretch(1);
 
     // "See full map" link, pinned to the top-right of the map row.
-    mapRow->addWidget(Win7::bodyLabel("See full map", /*link=*/true),
+    mapRow->addWidget(Win7::bodyLabel("查看完整映射", /*link=*/true),
                       0, Qt::AlignTop);
 
     contentV->addLayout(mapRow);
@@ -268,7 +268,7 @@ NetworkSharingPage::NetworkSharingPage(QScrollArea *sidebar, QWidget *parent)
         contentV->addSpacing(6);
     };
 
-    addHeading("View your active networks", "Connect or disconnect");
+    addHeading("查看活动网络", "连接或断开连接");
 
     // Active-network panel: icon + (name / category) on the left, a vertical
     // rule, then the access-type / connections grid on the right.
@@ -298,7 +298,7 @@ NetworkSharingPage::NetworkSharingPage(QScrollArea *sidebar, QWidget *parent)
     netName->setStyleSheet("color: #000000; background: transparent;");
     nameCol->addWidget(netName);
 
-    nameCol->addWidget(Win7::bodyLabel("Public network", /*link=*/true));
+    nameCol->addWidget(Win7::bodyLabel("公用网络", /*link=*/true));
     activeRow->addLayout(nameCol);
 
     activeRow->addSpacing(20);
@@ -318,12 +318,12 @@ NetworkSharingPage::NetworkSharingPage(QScrollArea *sidebar, QWidget *parent)
     detailGrid->setHorizontalSpacing(10);
     detailGrid->setVerticalSpacing(6);
 
-    detailGrid->addWidget(Win7::label("Access type:"), 0, 0,
+    detailGrid->addWidget(Win7::label("访问类型："), 0, 0,
                           Qt::AlignLeft | Qt::AlignVCenter);
     detailGrid->addWidget(Win7::label(info.accessType), 0, 1,
                           Qt::AlignLeft | Qt::AlignVCenter);
 
-    detailGrid->addWidget(Win7::label("Connections:"), 1, 0,
+    detailGrid->addWidget(Win7::label("连接："), 1, 0,
                           Qt::AlignLeft | Qt::AlignVCenter);
 
     // The connection value is a small-icon + blue link cell.
@@ -357,31 +357,27 @@ NetworkSharingPage::NetworkSharingPage(QScrollArea *sidebar, QWidget *parent)
     contentV->addSpacing(20);
 
     // "Change your networking settings" heading + tasks
-    addHeading("Change your networking settings", QString());
+    addHeading("更改网络设置", QString());
 
     addTask(contentV, {"network-wired", "preferences-system-network",
                        "list-add"},
-            "Set up a new connection or network",
-            "Set up a wireless, broadband, dial-up, ad hoc, or VPN connection; "
-            "or set up a router or access point.");
+            "设置新连接或网络",
+            "设置无线、宽带、拨号、临时或 VPN 连接，或设置路由器或访问点。");
 
     addTask(contentV, {"network-wireless", "network-connect",
                        "preferences-system-network"},
-            "Connect to a network",
-            "Connect or reconnect to a wireless, wired, dial-up, or VPN network "
-            "connection.");
+            "连接到网络",
+            "连接或重新连接到无线、有线、拨号或 VPN 网络连接。");
 
     addTask(contentV, {"network-type-home", "network-workgroup", "system-users",
                        "preferences-system-network"},
-            "Choose homegroup and sharing options",
-            "Access files and printers located on other network computers, or "
-            "change sharing settings.");
+            "选择家庭组和共享选项",
+            "访问其他网络计算机上的文件和打印机，或更改共享设置。");
 
     addTask(contentV, {"system-help", "help-browser", "tools-wizard",
                        "preferences-system"},
-            "Troubleshoot problems",
-            "Diagnose and repair network problems, or get troubleshooting "
-            "information.");
+            "疑难解答",
+            "诊断并修复网络问题，或获取疑难解答信息。");
 
     contentV->addStretch(1);
 }

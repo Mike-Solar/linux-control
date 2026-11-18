@@ -3,6 +3,7 @@
 #include "IconHelper.h"
 #include "LinkLabel.h"
 #include "Win7Ui.h"
+#include "UiText.h"
 
 #include "SysfsScanner.h"
 #include "DeviceUtils.h"
@@ -32,12 +33,12 @@ constexpr int kRolePrinter = Qt::UserRole + 1;  // bool: is this a printer tile?
 // Devices and Printers folder, internal parts (CPUs, controllers, disks…) do
 // not, matching Windows.
 const QVector<QPair<QString, QPair<QString, QString>>> kDeviceCatOrder = {
-    { "Monitors",                        { "Monitor",         "video-display" } },
-    { "Mice and other pointing devices", { "Mouse",           "input-mouse" } },
-    { "Keyboards",                       { "Keyboard",        "input-keyboard" } },
-    { "Portable Devices",                { "Portable Device", "smartphone" } },
-    { "Universal Serial Bus devices",    { "USB device",      "drive-removable-media-usb" } },
-    { "Game controllers",                { "Game controller", "input-gaming" } },
+    { "Monitors",                        { "监视器",         "video-display" } },
+    { "Mice and other pointing devices", { "鼠标",           "input-mouse" } },
+    { "Keyboards",                       { "键盘",        "input-keyboard" } },
+    { "Portable Devices",                { "便携设备", "smartphone" } },
+    { "Universal Serial Bus devices",    { "USB 设备",      "drive-removable-media-usb" } },
+    { "Game controllers",                { "游戏控制器", "input-gaming" } },
 };
 
 // A command-bar link: black by default, blue underline on hover (the Explorer
@@ -78,8 +79,8 @@ DevicesAndPrintersPage::DevicesAndPrintersPage(QWidget *parent)
     auto *cmdBar = Win7::commandBar(&cmdLayout);
     cmdLayout->setContentsMargins(12, 0, 12, 0);
     cmdLayout->setSpacing(16);
-    auto *addDevice = commandLink("Add a device");
-    auto *addPrinter = commandLink("Add a printer");
+    auto *addDevice = commandLink("添加设备");
+    auto *addPrinter = commandLink("添加打印机");
     connect(addDevice,  &LinkLabel::clicked, this, &DevicesAndPrintersPage::launchAddDevice);
     connect(addPrinter, &LinkLabel::clicked, this, &DevicesAndPrintersPage::launchAddPrinter);
     cmdLayout->addWidget(addDevice);
@@ -131,20 +132,20 @@ DevicesAndPrintersPage::DevicesAndPrintersPage(QWidget *parent)
         return list;
     };
 
-    m_devicesHeader = makeHeader("Devices");
+    m_devicesHeader = makeHeader("设备");
     contentV->addWidget(m_devicesHeader);
     m_devicesList = makeList();
     contentV->addWidget(m_devicesList, 1);
 
     contentV->addSpacing(6);
 
-    m_printersHeader = makeHeader("Printers and Faxes");
+    m_printersHeader = makeHeader("打印机和传真");
     contentV->addWidget(m_printersHeader);
     m_printersList = makeList();
     m_printersList->setFixedHeight(kTileSize.height() + 24);
     contentV->addWidget(m_printersList);
 
-    m_statusLabel = new QLabel("Scanning for devices…");
+    m_statusLabel = new QLabel("正在扫描设备…");
     m_statusLabel->setStyleSheet("color: #666666; background: transparent;");
     m_statusLabel->setAlignment(Qt::AlignCenter);
     contentV->insertWidget(1, m_statusLabel);
@@ -219,7 +220,7 @@ void DevicesAndPrintersPage::populate(const ScanResult &result) {
     ShellDevice pc;
     pc.name = result.hostName;
     pc.iconName = "computer";
-    pc.category = "Computer";
+    pc.category = "计算机";
     QString vendor = readSysFile("/sys/class/dmi/id/sys_vendor");
     if (vendor.isEmpty())
         vendor = readSysFile("/sys/class/dmi/id/bios_vendor");
@@ -262,7 +263,7 @@ void DevicesAndPrintersPage::populate(const ScanResult &result) {
         ShellDevice sd;
         sd.name = p.info.isEmpty() ? p.name : p.info;
         sd.iconName = p.isFax ? "printer" : "printer";
-        sd.category = p.isFax ? "Fax" : (p.isClass ? "Printer class" : "Printer");
+        sd.category = p.isFax ? "传真" : (p.isClass ? "打印机类" : "打印机");
         // The make-and-model string leads with the manufacturer, e.g.
         // "HP LaserJet 4000 Foomatic/Postscript".
         sd.manufacturer = p.makeAndModel.section(' ', 0, 0);
@@ -278,9 +279,9 @@ void DevicesAndPrintersPage::populate(const ScanResult &result) {
     addTiles(m_devicesList, m_devices, false);
     addTiles(m_printersList, m_printers, true);
 
-    m_devicesHeader->setText(QString("Devices (%1)").arg(m_devices.size()));
+    m_devicesHeader->setText(QString("设备 (%1)").arg(m_devices.size()));
     m_printersHeader->setText(
-        QString("Printers and Faxes (%1)").arg(m_printers.size()));
+        QString("打印机和传真 (%1)").arg(m_printers.size()));
 
     m_statusLabel->hide();
     updateDetails(nullptr);
@@ -324,23 +325,23 @@ void DevicesAndPrintersPage::updateDetails(const ShellDevice *dev) {
     if (!dev) {
         const int total = m_devices.size() + m_printers.size();
         m_detailIcon->setPixmap(resolveIcon("computer").pixmap(48, 48));
-        m_detailName->setText(total > 0 ? QString("%1 items").arg(total)
+        m_detailName->setText(total > 0 ? QString("%1 个项目").arg(total)
                                         : QString());
         m_detailLine1->clear();
         m_detailLine2->clear();
-        m_detailLine1->setText("Select an item to view its details.");
+        m_detailLine1->setText("选择项目以查看其详细信息。");
         return;
     }
 
     m_detailIcon->setPixmap(resolveIcon(dev->iconName).pixmap(48, 48));
     m_detailName->setText(dev->name);
     if (dev->isPrinter) {
-        m_detailLine1->setText("Status: " + dev->status);
-        m_detailLine2->setText("Category: " + dev->category);
+        m_detailLine1->setText("状态：" + UiText::localize(dev->status));
+        m_detailLine2->setText("类别：" + UiText::localize(dev->category));
     } else {
         const QString model = dev->model.isEmpty() ? dev->name : dev->model;
-        m_detailLine1->setText("Model: " + model);
-        m_detailLine2->setText("Category: " + dev->category);
+        m_detailLine1->setText("型号：" + model);
+        m_detailLine2->setText("类别：" + UiText::localize(dev->category));
     }
 }
 

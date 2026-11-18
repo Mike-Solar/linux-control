@@ -97,7 +97,7 @@ QString PersonalizationPage::currentSchemeId()
     // The active scheme id lives in kdeglobals [General] ColorScheme.
     QProcess proc;
     proc.start(QStringLiteral("kreadconfig6"),
-               { QStringLiteral("--group"), QStringLiteral("General"),
+               { QStringLiteral("--group"), QStringLiteral("常规"),
                  QStringLiteral("--key"), QStringLiteral("ColorScheme") });
     if (proc.waitForFinished(2000)) {
         const QString id = QString::fromUtf8(proc.readAllStandardOutput()).trimmed();
@@ -191,12 +191,11 @@ PersonalizationPage::PersonalizationPage(QScrollArea *sidebar, QWidget *parent)
 
     // Page title.
     contentV->addWidget(
-        Win7::pageTitle("Change the visuals and sounds on your computer"));
+        Win7::pageTitle("更改计算机的视觉效果和声音"));
     contentV->addSpacing(6);
 
     auto *intro = Win7::label(
-        "Click a theme to change the desktop background, window color, sounds, "
-        "and screen saver all at once.", 9, "#1A1A1A");
+        "单击主题可同时更改桌面背景、窗口颜色、声音和屏幕保护程序。", 9, "#1A1A1A");
     intro->setWordWrap(true);
     contentV->addWidget(intro);
     contentV->addSpacing(14);
@@ -208,7 +207,7 @@ PersonalizationPage::PersonalizationPage(QScrollArea *sidebar, QWidget *parent)
         contentV->addSpacing(10);
     };
 
-    addHeading(QStringLiteral("Aero Themes (%1)").arg(m_schemes.size()));
+    addHeading(QStringLiteral("Aero 主题 (%1)").arg(m_schemes.size()));
 
     // Swatch grid: four themes per row.
     auto *grid = new QGridLayout;
@@ -282,13 +281,13 @@ PersonalizationPage::PersonalizationPage(QScrollArea *sidebar, QWidget *parent)
         actionsRow->addLayout(col);
     };
 
-    addAction("preferences-desktop-wallpaper", "Desktop\nBackground",
+    addAction("preferences-desktop-wallpaper", "桌面\n背景",
               { "kcmshell6", "kcm_wallpaper" });
-    addAction("preferences-desktop-color", "Window\nColor",
+    addAction("preferences-desktop-color", "窗口\n颜色",
               { "kcmshell6", "kcm_colors" });
-    addAction("preferences-desktop-sound", "Sounds",
+    addAction("preferences-desktop-sound", "声音",
               { "kcmshell6", "kcm_soundtheme" });
-    addAction("preferences-desktop-screensaver", "Screen\nSaver",
+    addAction("preferences-desktop-screensaver", "屏幕\n保护程序",
               { "kcmshell6", "kcm_screenlocker" });
     actionsRow->addStretch(1);
 
